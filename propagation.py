@@ -37,7 +37,7 @@ def fresnel_prop(Uin, wvl, delta1, delta2, dz):
     Q2 = np.exp(-1j*PI**2 * 2*dz/(m*k) * (fX**2+fY**2))
     Q3 = np.exp(1j*k/2 * (m-1)/(m*dz) * (x2**2+y2**2))
     Uout = Q3 * ift2(Q2*ft2(Q1*Uin/m, delta1), delta_f1)
-    return Uout,x2,y2
+    return Uout, x2, y2
 
 
 def fresnel_prop_no_scale(Uin, wvl, delta1, dz):
@@ -45,6 +45,10 @@ def fresnel_prop_no_scale(Uin, wvl, delta1, dz):
     #using angular spectrum propagation technique
     N = np.size(Uin,0)
     k = 2*PI / wvl
+    [x1,y1] = np.meshgrid(
+        delta1 * np.linspace(-N//2,N//2-1,N),
+        delta1 * np.linspace(-N//2,N//2-1,N),
+    )
     delta_f1 = 1/(N*delta1)
     [fX,fY] = np.meshgrid(
         delta_f1 * np.linspace(-N//2,N//2-1,N),
@@ -52,5 +56,5 @@ def fresnel_prop_no_scale(Uin, wvl, delta1, dz):
     )
     Q = np.exp(-1j*k*dz) * np.exp(-1j*PI*wvl*dz*(fX**2 + fY**2))
     Uout = ift2(Q * ft2(Uin, delta1), delta_f1)
-    return Uout
+    return Uout, x1, y1
     

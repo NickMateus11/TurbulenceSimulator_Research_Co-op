@@ -28,7 +28,7 @@ class GaussianBeam():
 
     def phase(self):
         if not (self.r_z is np.inf):
-            phase = -(self.k*self.dz + self.k*(self.x**2 + self.y**2)/(2*self.r_z) - np.arctan2(self.dz,self.zr))
+            phase = -(self.k*self.z + self.k*(self.x**2 + self.y**2)/(2*self.r_z) - np.arctan2(self.z,self.zr))
         else:
             phase = np.zeros(shape=(self.N,self.N))
         return phase
@@ -38,7 +38,8 @@ class GaussianBeam():
         return self.amplitude() * np.exp(1j * self.phase())
 
     def propagate(self, dz):
-        self.w_z = self.w0 * np.sqrt(1 + (self.wvl*dz / (PI*self.w0**2))**2)
+        self.z += dz
+        self.w_z = self.w0 * np.sqrt(1 + (self.wvl*self.z / (PI*self.w0**2))**2)
 
     def plot_slice(self):
         plot_wave_slice(self.wave, self.x)
@@ -51,10 +52,10 @@ class GaussianBeam():
         idx = 0
         thresh = np.max(I)/np.exp(1)**2
         for i in range(len(I)):
-            if np.abs(I[i]-thresh) < np.abs(I[idx]-thresh):
+            if I[i] < thresh:
                 idx = i
-        
-        return xx[idx]
+            else: break        
+        return np.abs(xx[idx])
 
     @staticmethod
     def plot_waist_location(U,x, override_title=True):
