@@ -1,6 +1,7 @@
 from matplotlib import pyplot as plt
 import numpy as np
 from func_utils import plot_wave_slice
+from propagation import fresnel_prop_no_scale
 
 
 PI = np.pi
@@ -54,11 +55,11 @@ class GaussianBeam():
         for i in range(len(I)):
             if I[i] < thresh:
                 idx = i
-            else: break        
+            else: break     
         return np.abs(xx[idx])
 
     @staticmethod
-    def plot_waist_location(U,x, override_title=True):
+    def plot_waist_location(U, x, override_title=True):
         maxI = np.max(np.abs(U[len(U)//2])**2)
         n = 50
         waist = GaussianBeam.get_waist_from_field(U, x)
@@ -68,4 +69,47 @@ class GaussianBeam():
         if override_title:
             plt.title(f'w_z: {np.abs(waist)}')
 
+    @staticmethod
+    def plot_waist_over_distance_symmetric(U, x, wvl, delta, z_span, n=20):
+
+        waists = []
+        xx = np.linspace(-z_span/2, z_span/2, n)
+        waists.append(GaussianBeam.get_waist_from_field(U, x))
+
+        dz = z_span / n
+        g_prop = U
+        for _ in range(n//2-1):
+            g_prop, x1, y1 = fresnel_prop_no_scale(g_prop, wvl, delta, dz)
+            waists.append(GaussianBeam.get_waist_from_field(g_prop, x1))
+        waists = waists[::-1] + waists
+        upper_waists =  np.array(waists)
+        lower_waists = -np.array(waists)
+
+        plt.figure()
+        plt.plot(xx, upper_waists, 'b')
+        plt.plot(xx, lower_waists, 'b')
+        y_scale = max(waists) * 2
+        plt.ylim(-y_scale, y_scale)
+
+    @staticmethod
+    def plot_waist_over_distance(U, x, wvl, delta, z_span, offset=0, n=20):
+
+        waists = []
+        xx = np.linspace(offset, offset+z_span, n)
+        waists.append(GaussianBeam.get_waist_from_field(U, x))
+
+        dz = z_span / n
+        g_prop = U
+        for _ in range(n-1):
+            g_prop, x1, y1 = fresnel_prop_no_scale(g_prop, wvl, delta, dz)
+            waists.append(GaussianBeam.get_waist_from_field(g_prop, x1))
+        upper_waists =  np.array(waists)
+        lower_waists = -np.array(waists)
+
+        if offset == 0:
+            plt.figure()
+        plt.plot(xx, upper_waists, 'b')
+        plt.plot(xx, lower_waists, 'b')
+        y_scale = max(waists) * 2
+        plt.ylim(-y_scale, y_scale)
 
