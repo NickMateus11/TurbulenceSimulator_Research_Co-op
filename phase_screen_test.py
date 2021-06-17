@@ -71,8 +71,8 @@ def phase_screen_statistics():
 
 
 def main():
-    # phase_screen_gen()
-    phase_screen_statistics()
+    phase_screen_gen()
+    # phase_screen_statistics()
 
 
 if __name__ == '__main__':

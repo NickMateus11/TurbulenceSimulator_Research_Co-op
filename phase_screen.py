@@ -6,6 +6,12 @@ from matplotlib import pyplot as plt
 
 PI = np.pi
 
+def read_file(filename):
+    with open(filename) as infile:
+        data = [x.split(',') for x in infile.read().strip().split()]
+        data = [[eval(x.replace('i','j')) for x in r] for r in data]
+        data = np.array(data)
+    return data
 
 def compute_strfunc(phz, mask, delta):
     N = np.size(phz,0)
@@ -42,7 +48,8 @@ def ft_phase_screen(r0, N, delta, L0, l0, method='modified von karman'):
 
     PSD_phi[N//2, N//2] = 0
 
-    cn = (np.random.randn(N,N) + 1j*np.random.randn(N,N)) * np.sqrt(PSD_phi) * del_f
+    cn = read_file("dist_mat1.txt") * np.sqrt(PSD_phi) * del_f
+    # cn = (np.random.randn(N,N) + 1j*np.random.randn(N,N)) * np.sqrt(PSD_phi) * del_f
     phz = np.real(ift2(cn, 1))
 
     return phz
@@ -78,7 +85,8 @@ def ft_sub_harm_phase_screen(r0, N, delta, L0, l0, method='modified von karman')
 
         PSD_phi[1, 1] = 0
 
-        cn = (np.random.randn(N_p,N_p) + 1j*np.random.randn(N_p,N_p)) * np.sqrt(PSD_phi) * del_f
+        cn = read_file(f"dist_mat2_{p+1}.txt") * np.sqrt(PSD_phi) * del_f
+        # cn = (np.random.randn(N_p,N_p) + 1j*np.random.randn(N_p,N_p)) * np.sqrt(PSD_phi) * del_f
         SH = np.zeros(shape=(N,N))
 
         for i in range(N_p**2):
