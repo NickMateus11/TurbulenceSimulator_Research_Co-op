@@ -5,23 +5,28 @@
 
 import numpy as np
 import tensorflow as tf
+tf.compat.v1.disable_eager_execution()
 import datetime
+import sys
 
-# Processing Units logs
-log_device_placement = True
+# requires GPU to be accessible
+if len(tf.config.list_physical_devices('GPU')) == 0:
+    sys.exit(1)
 
 # Num of multiplications to perform
 n = 10
+# size of matrix (NxN)
+N = 1000
 
 '''
 Example: compute A^n + B^n on 2 GPUs
-Results on 8 cores with 2 GTX-980:
+Sample results on 8 cores with 2 GTX-980:
  * Single GPU computation time: 0:00:11.277449
  * Multi GPU computation time: 0:00:07.131701
 '''
 # Create random large matrix
-A = np.random.rand(1000, 1000).astype('float32')
-B = np.random.rand(1000, 1000).astype('float32')
+A = np.random.rand(N, N).astype('float32')
+B = np.random.rand(N, N).astype('float32')
 
 # Create a graph to store results
 c1 = []
@@ -37,19 +42,19 @@ def matpow(M, n):
 Single GPU computing
 '''
 with tf.device('/gpu:0'):
-    # a = np.placeholder(tf.float32, [10000, 10000])
-    # b = tf.placeholder(tf.float32, [10000, 10000])
+    a = tf.compat.v1.placeholder(tf.float32, [N, N])
+    b = tf.compat.v1.placeholder(tf.float32, [N, N])
     # Compute A^n and B^n and store results in c1
-    c1.append(matpow(A, n))
-    c1.append(matpow(B, n))
+    c1.append(matpow(a, n))
+    c1.append(matpow(a, n))
 
 with tf.device('/cpu:0'):
-  sum = tf.add_n(c1) #Addition of all elements in c1, i.e. A^n + B^n
+    sum = tf.add_n(c1) #Addition of all elements in c1, i.e. A^n + B^n
 
 t1_1 = datetime.datetime.now()
-with tf.Session(config=tf.ConfigProto(log_device_placement=log_device_placement)) as sess:
+with tf.compat.v1.Session() as sess:
     # Run the op.
-    sess.run(sum, {'a':A, 'b':B})
+    sess.run(sum, {a:A, b:B})
 t2_1 = datetime.datetime.now()
 
 print("Single GPU computation time: " + str(t2_1-t1_1))
