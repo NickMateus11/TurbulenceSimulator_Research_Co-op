@@ -37,7 +37,7 @@ def square(x,y,s):
 
 def circ(x,y,D):
     r = np.sqrt(x**2 + y**2)
-    return (r < D/2).astype(np.float32)
+    return (r < D/2.0).astype(np.float32)
 
 def mesh(x,y,z):
     fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
@@ -45,9 +45,16 @@ def mesh(x,y,z):
     ax.plot_surface(x,y,z)
     return ax
 
+def plot_slice(U, x, new_fig=True):
+    if new_fig: 
+        plt.figure()
+    xx = x[len(x)//2]
+    plt.plot(xx, U[len(U)//2])
+
 def plot_wave_slice(U, x, new_fig=True):
     if new_fig: 
         plt.figure()
     I = np.abs(U[len(U)//2])**2
     xx = x[len(x)//2]
     plt.plot(xx, I)
+
