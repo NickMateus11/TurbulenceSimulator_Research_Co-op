@@ -92,21 +92,21 @@ class GaussianBeam():
         plt.ylim(-y_scale, y_scale)
 
     @staticmethod
-    def plot_waist_over_distance(U, x, wvl, delta, z_span, offset=0, n=20):
+    def plot_waist_over_distance(U, x, wvl, delta, z_span, n=20, offset=0, new_fig=True):
 
         waists = []
         xx = np.linspace(offset, offset+z_span, n)
         waists.append(GaussianBeam.get_waist_from_field(U, x))
 
-        dz = z_span / n
         g_prop = U
+        dz = z_span / (n-1)
         for _ in range(n-1):
             g_prop, x1, y1 = fresnel_prop_no_scale(g_prop, wvl, delta, dz)
             waists.append(GaussianBeam.get_waist_from_field(g_prop, x1))
         upper_waists =  np.array(waists)
         lower_waists = -np.array(waists)
 
-        if offset == 0:
+        if new_fig:
             plt.figure()
         plt.plot(xx, upper_waists, 'b')
         plt.plot(xx, lower_waists, 'b')

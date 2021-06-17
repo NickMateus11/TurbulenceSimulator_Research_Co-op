@@ -30,7 +30,7 @@ g_prop,x1,y1 = fresnel_prop_no_scale(G.wave, wvl, delta, 5)
 # GaussianBeam.plot_waist_location(g_prop, x)
 
 g_prop *= lens
-GaussianBeam.plot_waist_over_distance(g_prop, G.x, wvl, delta, 6, offset=5)
+GaussianBeam.plot_waist_over_distance(g_prop, G.x, wvl, delta, 6, offset=5, new_fig=False)
 g_prop,x1,y1 = fresnel_prop_no_scale(g_prop, wvl, delta, 6)
 # plot_wave_slice(g_prop, x1)
 # GaussianBeam.plot_waist_location(g_prop, x)

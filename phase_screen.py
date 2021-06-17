@@ -91,28 +91,3 @@ def ft_sub_harm_phase_screen(r0, N, delta, L0, l0, method='modified von karman')
 
     return phz_lo, phz_hi
 
-
-def main():
-    D = 2
-    r0 = 0.1
-    N = 256
-    L0 = 100
-    l0 = 0.01
-
-    delta = D/N
-    x = np.linspace(-N/2,N/2-1, N) * delta
-    y = np.linspace(-N/2,N/2-1, N) * delta
-
-    [phz_lo, phz_hi] = ft_sub_harm_phase_screen(r0, N, delta, L0, l0)
-    phz = phz_lo + phz_hi # (SH + FT)
-
-    plt.figure(1)
-    plt.imshow(phz, extent=[x[0], x[-1], y[-1], y[0]])
-
-    plt.set_cmap('gray')    
-    plt.colorbar()
-    plt.show()
-
-
-if __name__ == '__main__':
-    main()

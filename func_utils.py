@@ -1,7 +1,21 @@
 
 import numpy as np
-from matplotlib import pyplot as plt, cm
+from matplotlib import pyplot as plt
 
+
+def str_fnc2_ft(ph, mask, delta):
+    N = np.size(ph, axis=0)
+    ph *= mask
+
+    P = ft2(ph, delta)
+    S = ft2(ph**2, delta)
+    W = ft2(mask, delta)
+    
+    delta_f = 1/(N*delta)
+    w2 = ift2(W*W.conj(), delta_f)
+
+    D = 2 * ift2(np.real(S*W.conj()) - np.abs(P)**2, delta_f) / w2 * mask
+    return np.abs(D)
 
 def cart2pol(x, y):
     phi = np.arctan2(y, x)
@@ -31,8 +45,9 @@ def mesh(x,y,z):
     ax.plot_surface(x,y,z)
     return ax
 
-def plot_wave_slice(U, x):
-    plt.figure()
+def plot_wave_slice(U, x, new_fig=True):
+    if new_fig: 
+        plt.figure()
     I = np.abs(U[len(U)//2])**2
     xx = x[len(x)//2]
     plt.plot(xx, I)

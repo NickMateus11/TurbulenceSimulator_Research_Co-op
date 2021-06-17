@@ -58,12 +58,14 @@ def continuous_prop_test():
     n = 20
 
     GaussianBeam.plot_waist_over_distance_symmetric(G.wave, G.x, wvl, delta, z_span, n)
-    # GaussianBeam.plot_waist_over_distance(G.wave, G.x, wvl, delta, z_span/2, n)
+    
+    GaussianBeam.plot_waist_over_distance(G.wave, G.x, wvl, delta, z_span/2, n)
+    GaussianBeam.plot_waist_over_distance(G.wave, G.x, wvl, delta, -z_span/2, n, new_fig=False)
     
     plt.show()
 
 def main():
-    simple_prop_test()
+    # simple_prop_test()
     continuous_prop_test()
 
 if __name__ == '__main__':
