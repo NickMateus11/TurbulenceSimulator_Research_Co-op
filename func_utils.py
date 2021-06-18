@@ -17,6 +17,20 @@ def str_fnc2_ft(ph, mask, delta):
     D = 2 * ift2(np.real(S*W.conj()) - np.abs(P)**2, delta_f) / w2 * mask
     return np.abs(D)
 
+def corr2_ft(u1, u2, mask, delta):
+    N = np.size(u1, axis=0)
+    c = np.zeros( (N,N) )
+    delta_f = 1/(N*delta)
+
+    U1 = ft2(u1 * mask, delta)
+    U2 = ft2(u2 * mask, delta)
+    U12corr = ift2(U1.conj() * U2, delta_f)
+
+    maskcorr = ift2(abs(ft2(mask, delta))**2, delta_f) * delta**2
+    idx = maskcorr.astype(np.bool)
+    c[idx] = U12corr[idx] / maskcorr[idx] * mask[idx]
+    return c
+
 def cart2pol(x, y):
     phi = np.arctan2(y, x)
     rho = np.sqrt(x**2 + y**2)
