@@ -1,5 +1,8 @@
+import multiprocessing
 from matplotlib import pyplot as plt
 import numpy as np
+import time
+from numpy.ma.extras import average
 
 from gaussian_beam import GaussianBeam
 from func_utils import str_fnc2_ft, circ, plot_slice, mesh
@@ -29,6 +32,16 @@ def phase_screen_gen():
     plt.show()
 
 
+def phase_screen_calcs(args):
+    N, mask, L0, l0, r0, delta = args
+    [phz_lo, phz_hi] = ft_sub_harm_phase_screen(r0, N, delta, L0, l0)
+    phz1 = phz_lo + phz_hi
+    D1 = str_fnc2_ft(phz1, mask, delta)
+    phz2 = ft_phase_screen(r0, N, delta, L0, l0)
+    D2 = str_fnc2_ft(phz2, mask, delta)
+    return D1, D2
+
+
 def phase_screen_statistics():
     D = 2
     r0 = 0.1
@@ -45,20 +58,27 @@ def phase_screen_statistics():
     # mask = np.ones( (N,N) )
     # mesh(x,y, mask)
 
+    N_phase_screens = 40
+
     avgD1 = np.zeros( (N,N) )
     avgD2 = np.zeros( (N,N) )
 
-    N_phase_screens = 40
-    for _ in range(N_phase_screens):
-        [phz_lo, phz_hi] = ft_sub_harm_phase_screen(r0, N, delta, L0, l0)
-        phz1 = phz_lo + phz_hi
-        D1 = str_fnc2_ft(phz1, mask, delta)
-        avgD1 += D1/N_phase_screens
+    start = time.time()
+    averages = [phase_screen_calcs( [N, mask, L0, l0, r0, delta] ) for _ in range(N_phase_screens)]
+    print(time.time() - start)
 
-        phz2 = ft_phase_screen(r0, N, delta, L0, l0)
-        D2 = str_fnc2_ft(phz2, mask, delta)
-        avgD2 += D2/N_phase_screens
+    start = time.time()
+    with multiprocessing.Pool() as pool:
+        averages = pool.map(phase_screen_calcs, [(N, mask, L0, l0, r0, delta)]*N_phase_screens)
+        # averages = pool.starmap(phase_screen_calcs, [(N, mask, L0, l0, r0, delta)]*N_phase_screens)
+    print(time.time() - start)    
 
+    for i in range(N_phase_screens):
+        # a1, a2 = averages.get(timeout=20)
+        a1, a2 = averages[i]
+        avgD1 += a1/N_phase_screens
+        avgD2 += a2/N_phase_screens
+        
     theo_struc = 6.88 * (np.abs(xx)/r0) ** (5/3)
 
     plt.figure()
