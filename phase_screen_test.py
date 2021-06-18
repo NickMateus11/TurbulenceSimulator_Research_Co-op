@@ -58,7 +58,7 @@ def phase_screen_statistics():
     # mask = np.ones( (N,N) )
     # mesh(x,y, mask)
 
-    N_phase_screens = 40
+    N_phase_screens = 100
 
     avgD1 = np.zeros( (N,N) )
     avgD2 = np.zeros( (N,N) )
@@ -68,7 +68,7 @@ def phase_screen_statistics():
     print(time.time() - start)
 
     start = time.time()
-    with multiprocessing.Pool() as pool:
+    with multiprocessing.Pool(processes=4) as pool:
         averages = pool.map(phase_screen_calcs, [(N, mask, L0, l0, r0, delta)]*N_phase_screens)
         # averages = pool.starmap(phase_screen_calcs, [(N, mask, L0, l0, r0, delta)]*N_phase_screens)
     print(time.time() - start)    
