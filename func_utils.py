@@ -1,6 +1,7 @@
 
 import numpy as np
-from matplotlib import pyplot as plt
+# from matplotlib import pyplot as plt
+import tensorflow as tf
 
 
 def str_fnc2_ft(ph, mask, delta):
@@ -32,16 +33,16 @@ def corr2_ft(u1, u2, mask, delta):
     return c
 
 def cart2pol(x, y):
-    phi = np.arctan2(y, x)
-    rho = np.sqrt(x**2 + y**2)
+    phi = tf.math.atan2(y, x)
+    rho = tf.sqrt(x**2 + y**2)
     return phi, rho
 
 def ft2(g, delta):
-    return np.fft.fftshift(np.fft.fft2(np.fft.fftshift(g))) * delta**2
+    return tf.signal.fftshift(tf.signal.fft2d(tf.signal.fftshift(g))) * delta**2
 
 def ift2(g, delta_f):
     N = np.size(g,0) # assume square
-    return np.fft.ifftshift(np.fft.ifft2(np.fft.ifftshift(g))) * (N * delta_f)**2
+    return tf.signal.ifftshift(tf.signal.ifft2d(tf.signal.ifftshift(g))) * (N * delta_f)**2
 
 def rect(x,width):
     return np.heaviside(x+width/2,0.5) - np.heaviside(x-width/2,0.5)

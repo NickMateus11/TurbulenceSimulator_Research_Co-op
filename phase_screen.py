@@ -1,7 +1,8 @@
 
 import numpy as np
 from func_utils import ft2, ift2, cart2pol
-from matplotlib import pyplot as plt
+# from matplotlib import pyplot as plt
+import tensorflow as tf
 
 
 PI = np.pi
@@ -27,13 +28,13 @@ def compute_strfunc(phz, mask, delta):
     D = 2 * ift2(np.real(S*np.conj(W)) - np.abs(P)**2, delta_f) / w2 * mask
     return D
 
-
+@tf.function
 def ft_phase_screen(r0, N, delta, L0, l0, method='modified von karman'):
     del_f = 1/(N*delta)
 
-    fx = np.linspace(-N/2,N/2-1, N) * del_f
-    fy = np.linspace(-N/2,N/2-1, N) * del_f
-    [fx, fy] = np.meshgrid(fx, fy)
+    fx = tf.linspace(-N/2,N/2-1, N) * del_f
+    fy = tf.linspace(-N/2,N/2-1, N) * del_f
+    [fx, fy] = tf.meshgrid(fx, fy)
 
     [th, f] = cart2pol(fx, fy)
     fm = 5.92 / (l0*2*PI)
@@ -42,15 +43,16 @@ def ft_phase_screen(r0, N, delta, L0, l0, method='modified von karman'):
     if method == 'von karman':
         PSD_phi = 0.023 * r0**(-5/3) / (f**2 + f0**2)**(11/6)
     elif method =='modified von karman':
-        PSD_phi = 0.023 * r0**(-5/3) * np.exp(-(f/fm)**2) / (f**2 + f0**2)**(11/6)
+        PSD_phi = 0.023 * r0**(-5/3) * tf.exp(-(f/fm)**2) / (f**2 + f0**2)**(11/6)
     else: # kolmogorov
         PSD_phi = 0.023 * r0**(-5/3)
 
-    PSD_phi[N//2, N//2] = 0
+    # convert to tf.Variable? to mutate
+    # PSD_phi[N//2, N//2] = 0
 
     # cn = read_file("dist_mat1.txt") * np.sqrt(PSD_phi) * del_f
-    cn = (np.random.randn(N,N) + 1j*np.random.randn(N,N)) * np.sqrt(PSD_phi) * del_f
-    phz = np.real(ift2(cn, 1))
+    cn = tf.complex(tf.random.normal( (N,N) ), tf.random.normal( (N,N) )) * tf.cast(tf.math.sqrt(PSD_phi), tf.complex64) * del_f
+    phz = tf.math.real(ift2(cn, 1))
 
     return phz
 
@@ -89,7 +91,7 @@ def ft_sub_harm_phase_screen(r0, N, delta, L0, l0, method='modified von karman')
         cn = (np.random.randn(N_p,N_p) + 1j*np.random.randn(N_p,N_p)) * np.sqrt(PSD_phi) * del_f
         SH = np.zeros(shape=(N,N))
 
-        for i in range(N_p**2):
+        for i in range(N_p**2): #parallelize
             r,c = [i%N_p, i//N_p]
             SH = SH + cn[r, c] * np.exp(1j*2*PI*(fx[r, c]*x + fy[r, c]*y))
         

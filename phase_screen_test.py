@@ -1,13 +1,59 @@
 import multiprocessing
-from matplotlib import pyplot as plt
+# from matplotlib import pyplot as plt
 import numpy as np
+from timeit import default_timer as Timer
+import tensorflow as tf
 import time
-from numpy.ma.extras import average
 
-from gaussian_beam import GaussianBeam
+# from gaussian_beam import GaussianBeam
 from func_utils import str_fnc2_ft, circ, plot_slice, mesh
 from propagation import fresnel_prop_no_scale
 from phase_screen import ft_sub_harm_phase_screen, ft_phase_screen
+
+
+# slow because converting tensors to variables?
+# disables eager exec
+# @tf.function
+def tensorflow_test():
+    D = 2
+    r0 = 0.1
+    N = 256
+    L0 = 100
+    l0 = 0.01
+
+    delta = D/N
+    # x = np.linspace(-N/2,N/2-1, N) * delta
+    # y = np.linspace(-N/2,N/2-1, N) * delta
+
+    n_scr = 1000
+    ft_phase_screen(r0, N, delta, L0, l0)
+
+    out = tf.TensorArray(tf.float32, size=n_scr)
+   
+    # start = Timer()
+    # i = tf.constant(0)
+    # cond = lambda i, out: tf.less(i, n_scr)
+    # def body(i, out: tf.TensorArray):
+    #     curr_phz = ft_phase_screen(r0, N, delta, L0, l0)
+    #     curr_i = i
+    #     return (tf.add(i,1), out.write(curr_i, curr_phz))
+    # i, out = tf.while_loop(cond, body, [i, out], parallel_iterations=8)
+    # # tf.print(phz.stack())
+    # print(Timer()-start)
+    # # phz = out.stack()
+    # with tf.compat.v1.Session() as sess:
+    #     phzs = sess.run(out.stack())
+    # print(Timer()-start)
+
+
+    start = Timer()
+    for i in range(n_scr):
+       out = out.write(i, ft_phase_screen(r0, N, delta, L0, l0))
+    print(Timer()-start)
+    phz = out.stack() # careful if (n_scr * N^2) exeeds memory
+    print(Timer()-start)
+    # tf.print(out.stack())
+
 
 
 def phase_screen_gen():
@@ -134,8 +180,11 @@ def phase_screen_prop():
 
 def main():
     # phase_screen_gen()
-    phase_screen_statistics()
+    # phase_screen_statistics()
     # phase_screen_prop()
+
+    tensorflow_test()
+    print('Done')
 
 
 if __name__ == '__main__':
