@@ -1,11 +1,11 @@
 import multiprocessing
-# from matplotlib import pyplot as plt
+from matplotlib import pyplot as plt
 import numpy as np
 from timeit import default_timer as Timer
 import tensorflow as tf
 import time
 
-# from gaussian_beam import GaussianBeam
+from gaussian_beam import GaussianBeam
 from func_utils import str_fnc2_ft, circ, plot_slice, mesh
 from propagation import fresnel_prop_no_scale
 from phase_screen import ft_sub_harm_phase_screen, ft_phase_screen
@@ -17,7 +17,7 @@ from phase_screen import ft_sub_harm_phase_screen, ft_phase_screen
 def tensorflow_test():
     D = 2
     r0 = 0.1
-    N = 256
+    N = 2048
     L0 = 100
     l0 = 0.01
 
@@ -25,10 +25,11 @@ def tensorflow_test():
     # x = np.linspace(-N/2,N/2-1, N) * delta
     # y = np.linspace(-N/2,N/2-1, N) * delta
 
-    n_scr = 1000
+    n_scr = 20
     ft_phase_screen(r0, N, delta, L0, l0)
 
-    out = tf.TensorArray(tf.float32, size=n_scr)
+    # out = tf.TensorArray(tf.float32, size=n_scr)
+    out = np.empty(n_scr, tf.Tensor)
    
     # start = Timer()
     # i = tf.constant(0)
@@ -38,22 +39,26 @@ def tensorflow_test():
     #     curr_i = i
     #     return (tf.add(i,1), out.write(curr_i, curr_phz))
     # i, out = tf.while_loop(cond, body, [i, out], parallel_iterations=8)
-    # # tf.print(phz.stack())
+    # tf.print(phz.stack())
     # print(Timer()-start)
-    # # phz = out.stack()
+    # phz = out.stack()
+    # phz = out.read(0)
     # with tf.compat.v1.Session() as sess:
-    #     phzs = sess.run(out.stack())
+    #     phzs = sess.run(out.read(0))
     # print(Timer()-start)
-
 
     start = Timer()
     for i in range(n_scr):
-       out = out.write(i, ft_phase_screen(r0, N, delta, L0, l0))
+    #    out = out.write(i, ft_phase_screen(r0, N, delta, L0, l0))
+       out[i] = ft_phase_screen(r0, N, delta, L0, l0)
+    #    print(out[i].device)
     print(Timer()-start)
-    phz = out.stack() # careful if (n_scr * N^2) exeeds memory
-    print(Timer()-start)
+    # phz = out[0]
+    # phz = out.stack() # careful if (n_scr * N^2) exeeds memory
+    # print(Timer()-start)
     # tf.print(out.stack())
 
+    return out
 
 
 def phase_screen_gen():
@@ -113,11 +118,11 @@ def phase_screen_statistics():
     averages = [phase_screen_calcs( [N, mask, L0, l0, r0, delta] ) for _ in range(N_phase_screens)]
     print(time.time() - start)
 
-    start = time.time()
-    with multiprocessing.Pool(processes=4) as pool:
-        averages = pool.map(phase_screen_calcs, [(N, mask, L0, l0, r0, delta)]*N_phase_screens)
-        # averages = pool.starmap(phase_screen_calcs, [(N, mask, L0, l0, r0, delta)]*N_phase_screens)
-    print(time.time() - start)    
+    # start = time.time()
+    # with multiprocessing.Pool(processes=4) as pool:
+    #     averages = pool.map(phase_screen_calcs, [(N, mask, L0, l0, r0, delta)]*N_phase_screens)
+    #     # averages = pool.starmap(phase_screen_calcs, [(N, mask, L0, l0, r0, delta)]*N_phase_screens)
+    # print(time.time() - start)    
 
     for i in range(N_phase_screens):
         # a1, a2 = averages.get(timeout=20)
@@ -180,12 +185,25 @@ def phase_screen_prop():
 
 def main():
     # phase_screen_gen()
-    # phase_screen_statistics()
+    phase_screen_statistics()
     # phase_screen_prop()
 
-    tensorflow_test()
-    print('Done')
+    # start = Timer()
+    # res = tensorflow_test()
+    # print(Timer()-start)
+    
+    # np.save('output.npy', res)
+
+    # plt.figure(1)
+    # plt.imshow(res, extent=[x[0], x[-1], y[-1], y[0]])
+
+    # plt.set_cmap('gray')    
+    # plt.colorbar()
+    # plt.show()
+
 
 
 if __name__ == '__main__':
     main()
+
+print('Done')
