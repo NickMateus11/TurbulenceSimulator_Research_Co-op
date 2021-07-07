@@ -5,18 +5,19 @@ import tensorflow as tf
 
 
 def str_fnc2_ft(ph, mask, delta):
-    N = np.size(ph, axis=0)
-    ph *= mask
+
+    N = (ph.shape)[0]
+    ph = ph * mask
 
     P = ft2(ph, delta)
     S = ft2(ph**2, delta)
     W = ft2(mask, delta)
-    
-    delta_f = 1/(N*delta)
-    w2 = ift2(W*W.conj(), delta_f)
 
-    D = 2 * ift2(np.real(S*W.conj()) - np.abs(P)**2, delta_f) / w2 * mask
-    return np.abs(D)
+    delta_f = 1/(N*delta)
+    w2 = ift2(W*tf.math.conj(W), delta_f)
+
+    D = 2 * ift2(tf.cast(tf.math.real(S*tf.math.conj(W)) - tf.abs(P)**2, tf.complex64), delta_f) / w2 * mask
+    return tf.abs(D)
 
 def corr2_ft(u1, u2, mask, delta):
     N = np.size(u1, axis=0)
@@ -38,10 +39,13 @@ def cart2pol(x, y):
     return phi, rho
 
 def ft2(g, delta):
+    # g = tf.cast(g, tf.complex64) # complex64 required by tf.signal.fft
     return tf.signal.fftshift(tf.signal.fft2d(tf.signal.fftshift(g))) * delta**2
 
 def ift2(g, delta_f):
+    # g = tf.cast(g, tf.complex64) # complex64 required by tf.signal.fft
     N = np.size(g,0) # assume square
+    # print(g.dtype)
     return tf.signal.ifftshift(tf.signal.ifft2d(tf.signal.ifftshift(g))) * (N * delta_f)**2
 
 def rect(x,width):

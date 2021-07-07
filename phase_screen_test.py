@@ -14,19 +14,20 @@ from phase_screen import ft_sub_harm_phase_screen, ft_phase_screen
 # slow because converting tensors to variables?
 # disables eager exec
 # @tf.function
-def tensorflow_test():
+def tensorflow_test(n_scr):
     D = 2
     r0 = 0.1
-    N = 2048
+    N = 256
     L0 = 100
     l0 = 0.01
 
     delta = D/N
-    # x = np.linspace(-N/2,N/2-1, N) * delta
-    # y = np.linspace(-N/2,N/2-1, N) * delta
+    x = np.linspace(-N/2,N/2-1, N) * delta
+    y = np.linspace(-N/2,N/2-1, N) * delta
 
-    n_scr = 20
-    ft_phase_screen(r0, N, delta, L0, l0)
+    # n_scr = 10
+    # ft_phase_screen(r0, N, delta, L0, l0) # execute once for better benchmarking accuracy
+    # ft_sub_harm_phase_screen(r0, N, delta, L0, l0)
 
     # out = tf.TensorArray(tf.float32, size=n_scr)
     out = np.empty(n_scr, tf.Tensor)
@@ -35,22 +36,23 @@ def tensorflow_test():
     # i = tf.constant(0)
     # cond = lambda i, out: tf.less(i, n_scr)
     # def body(i, out: tf.TensorArray):
-    #     curr_phz = ft_phase_screen(r0, N, delta, L0, l0)
+    #     curr_phz = ft_sub_harm_phase_screen(r0, N, delta, L0, l0)
     #     curr_i = i
     #     return (tf.add(i,1), out.write(curr_i, curr_phz))
-    # i, out = tf.while_loop(cond, body, [i, out], parallel_iterations=8)
-    # tf.print(phz.stack())
-    # print(Timer()-start)
-    # phz = out.stack()
-    # phz = out.read(0)
-    # with tf.compat.v1.Session() as sess:
-    #     phzs = sess.run(out.read(0))
-    # print(Timer()-start)
+    # i, out = tf.while_loop(cond, body, [i, out], parallel_iterations=4)
+    # # tf.print(out.stack())
+    # # print(Timer()-start)
+    # # phz = out.stack()
+    # # phz = out.read(0)
+    # # with tf.compat.v1.Session() as sess:
+    # #     phzs = sess.run(out.read(0))
+    # tf.print(Timer()-start)
 
     start = Timer()
     for i in range(n_scr):
-    #    out = out.write(i, ft_phase_screen(r0, N, delta, L0, l0))
+    #    out = out.write(i, ft_sub_harm_phase_screen(r0, N, delta, L0, l0))
        out[i] = ft_phase_screen(r0, N, delta, L0, l0)
+    #    out[i] = ft_sub_harm_phase_screen(r0, N, delta, L0, l0)
     #    print(out[i].device)
     print(Timer()-start)
     # phz = out[0]
@@ -58,7 +60,7 @@ def tensorflow_test():
     # print(Timer()-start)
     # tf.print(out.stack())
 
-    return out
+    return out, x, y
 
 
 def phase_screen_gen():
@@ -72,8 +74,7 @@ def phase_screen_gen():
     x = np.linspace(-N/2,N/2-1, N) * delta
     y = np.linspace(-N/2,N/2-1, N) * delta
 
-    [phz_lo, phz_hi] = ft_sub_harm_phase_screen(r0, N, delta, L0, l0)
-    phz = phz_lo + phz_hi # (SH + FT)
+    phz = ft_sub_harm_phase_screen(r0, N, delta, L0, l0)
 
     plt.figure(1)
     plt.imshow(phz, extent=[x[0], x[-1], y[-1], y[0]])
@@ -85,11 +86,16 @@ def phase_screen_gen():
 
 def phase_screen_calcs(args):
     N, mask, L0, l0, r0, delta = args
-    [phz_lo, phz_hi] = ft_sub_harm_phase_screen(r0, N, delta, L0, l0)
-    phz1 = phz_lo + phz_hi
+    mask = tf.cast(mask, tf.complex64)
+
+    phz1 = ft_sub_harm_phase_screen(r0, N, delta, L0, l0)
+    phz1 = tf.cast(phz1, tf.complex64)
     D1 = str_fnc2_ft(phz1, mask, delta)
+
     phz2 = ft_phase_screen(r0, N, delta, L0, l0)
+    phz2 = tf.cast(phz2, tf.complex64)
     D2 = str_fnc2_ft(phz2, mask, delta)
+
     return D1, D2
 
 
@@ -189,13 +195,13 @@ def main():
     # phase_screen_prop()
 
     # start = Timer()
-    # res = tensorflow_test()
+    # res, x, y = tensorflow_test(100)
     # print(Timer()-start)
     
-    # np.save('output.npy', res)
+    # # np.save('output.npy', res)
 
     # plt.figure(1)
-    # plt.imshow(res, extent=[x[0], x[-1], y[-1], y[0]])
+    # plt.imshow(res[0], extent=[x[0], x[-1], y[-1], y[0]])
 
     # plt.set_cmap('gray')    
     # plt.colorbar()
