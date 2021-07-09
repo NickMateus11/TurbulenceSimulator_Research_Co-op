@@ -33,12 +33,12 @@ def compute_strfunc(phz: tf.Tensor, mask, delta):
 def ft_phase_screen(r0, N, delta, L0, l0, method='modified von karman'):
     del_f = 1/(N*delta)
 
-    fx = tf.linspace(-N/2,N/2-1, N) * del_f
-    fy = tf.linspace(-N/2,N/2-1, N) * del_f
+    fx = tf.linspace(-N//2,N//2-1, N) * del_f
+    fy = tf.linspace(-N//2,N//2-1, N) * del_f
     [fx, fy] = tf.meshgrid(fx, fy)
 
     [th, f] = cart2pol(fx, fy)
-    fm = 5.92 / (l0*2*PI)
+    fm = 5.92 / (l0*2*PI) if l0 != 0 else np.inf 
     f0 = 1/L0
 
     # PSD_phi = tf.Variable( tf.zeros_like(f, tf.complex64), dtype=tf.complex64 )
@@ -54,7 +54,7 @@ def ft_phase_screen(r0, N, delta, L0, l0, method='modified von karman'):
     tf.tensor_scatter_nd_update(PSD_phi, [[N//2,N//2]], [0])
 
     # cn = read_file("dist_mat1.txt") * np.sqrt(PSD_phi) * del_f
-    cn = tf.complex(tf.random.normal( (N,N) ), tf.random.normal( (N,N) )) * tf.cast(tf.math.sqrt(PSD_phi), tf.complex64) * del_f
+    cn = tf.complex(tf.random.normal( (N,N) ), tf.random.normal( (N,N) )) * tf.cast(tf.math.sqrt(PSD_phi) * del_f, tf.complex64)
     phz = tf.math.real(ift2(cn, 1))
 
     return phz
@@ -66,8 +66,8 @@ def ft_sub_harm_phase_screen(r0, N, delta, L0, l0, method='modified von karman')
     D = N*delta
     phz_hi = ft_phase_screen(r0, N, delta, L0, l0, method)
 
-    x = tf.linspace(-N/2,N/2-1, N) * delta
-    y = tf.linspace(-N/2,N/2-1, N) * delta
+    x = tf.linspace(-N//2,N//2-1, N) * delta
+    y = tf.linspace(-N//2,N//2-1, N) * delta
     [x, y] = tf.meshgrid(x, y)
 
     phz_lo = tf.zeros_like(phz_hi, tf.complex64)
@@ -77,7 +77,7 @@ def ft_sub_harm_phase_screen(r0, N, delta, L0, l0, method='modified von karman')
         fy = tf.linspace(-del_f, del_f, N_p)
         [fx, fy] = tf.meshgrid(fx, fy)
         [th, f] = cart2pol(fx, fy)
-        fm = 5.92 / (l0*2*PI)
+        fm = 5.92 / (l0*2*PI) if l0 != 0 else np.inf
         f0 = 1/L0
 
         # PSD_phi = tf.Variable( tf.zeros_like(f, tf.complex64), dtype=tf.complex64 )
@@ -94,12 +94,12 @@ def ft_sub_harm_phase_screen(r0, N, delta, L0, l0, method='modified von karman')
         tf.tensor_scatter_nd_update(PSD_phi, [[1,1]], [0])
 
         # cn = read_file(f"dist_mat2_{p+1}.txt") * np.sqrt(PSD_phi) * del_f
-        cn = tf.complex(tf.random.normal( (N_p,N_p) ), tf.random.normal( (N_p,N_p) )) * tf.cast(tf.math.sqrt(PSD_phi), tf.complex64) * del_f        
+        cn = tf.complex(tf.random.normal( (N_p,N_p) ), tf.random.normal( (N_p,N_p) )) * tf.cast(tf.math.sqrt(PSD_phi) * del_f , tf.complex64)       
         SH = tf.zeros( (N,N), tf.complex64 )
 
         for i in range(N_p**2): #parallelize
             r,c = [i%N_p, i//N_p]
-            SH = SH + cn[r, c] * tf.exp(tf.complex(0.0, 2*PI*(fx[r, c]*x + fy[r, c]*y)))
+            SH = SH + cn[r, c] * tf.cast(tf.exp(tf.complex(tf.constant(0, tf.float64), 2*PI*(fx[r, c]*x + fy[r, c]*y))), tf.complex64)
         
         phz_lo = phz_lo + SH
 
