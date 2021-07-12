@@ -22,8 +22,8 @@ def tensorflow_test(n_scr):
     l0 = 0.01
 
     delta = D/N
-    x = np.linspace(-N/2,N/2-1, N) * delta
-    y = np.linspace(-N/2,N/2-1, N) * delta
+    x = np.linspace(-N//2,N//2-1, N) * delta
+    y = np.linspace(-N//2,N//2-1, N) * delta
 
     # n_scr = 10
     # ft_phase_screen(r0, N, delta, L0, l0) # execute once for better benchmarking accuracy
@@ -51,8 +51,8 @@ def tensorflow_test(n_scr):
     start = Timer()
     for i in range(n_scr):
     #    out = out.write(i, ft_sub_harm_phase_screen(r0, N, delta, L0, l0))
-       out[i] = ft_phase_screen(r0, N, delta, L0, l0)
-    #    out[i] = ft_sub_harm_phase_screen(r0, N, delta, L0, l0)
+    #    out[i] = ft_phase_screen(r0, N, delta, L0, l0)
+       out[i] = ft_sub_harm_phase_screen(r0, N, delta, L0, l0)
     #    print(out[i].device)
     print(Timer()-start)
     # phz = out[0]
@@ -74,14 +74,20 @@ def phase_screen_gen():
     x = np.linspace(-N/2,N/2-1, N) * delta
     y = np.linspace(-N/2,N/2-1, N) * delta
 
-    phz = ft_sub_harm_phase_screen(r0, N, delta, L0, l0)
+    phz1 = ft_sub_harm_phase_screen(r0, N, delta, L0, l0)
+    phz2 = ft_phase_screen(r0, N, delta, L0, l0)
 
     plt.figure(1)
-    plt.imshow(phz, extent=[x[0], x[-1], y[-1], y[0]])
-
+    plt.imshow(phz1, extent=[x[0], x[-1], y[-1], y[0]])
     plt.set_cmap('gray')    
     plt.colorbar()
-    plt.show()
+
+    plt.figure(2)
+    plt.imshow(phz2, extent=[x[0], x[-1], y[-1], y[0]])
+    plt.set_cmap('gray')    
+    plt.colorbar()
+    
+    # plt.show()
 
 
 def phase_screen_calcs(args):
@@ -115,7 +121,7 @@ def phase_screen_statistics():
     # mask = np.ones( (N,N) )
     # mesh(x,y, mask)
 
-    N_phase_screens = 100
+    N_phase_screens = 1000
 
     avgD1 = np.zeros( (N,N) )
     avgD2 = np.zeros( (N,N) )
@@ -191,11 +197,11 @@ def phase_screen_prop():
 
 def main():
     # phase_screen_gen()
-    phase_screen_statistics()
+    # phase_screen_statistics()
     # phase_screen_prop()
 
     # start = Timer()
-    # res, x, y = tensorflow_test(100)
+    res, x, y = tensorflow_test(100)
     # print(Timer()-start)
     
     # # np.save('output.npy', res)

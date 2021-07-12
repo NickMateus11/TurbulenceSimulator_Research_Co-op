@@ -95,7 +95,12 @@ for idxreal in range(nreals):
 
 plt.figure(1)
 plt.imshow(np.abs(Uout)**2)
-
 plt.set_cmap('gray')    
 plt.colorbar()
+
+plt.figure(2)
+plt.imshow(np.angle(Uout))
+plt.set_cmap('gray')    
+plt.colorbar()
+
 plt.show()
