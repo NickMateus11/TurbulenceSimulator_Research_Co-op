@@ -29,9 +29,7 @@ def corr2_ft(u1, u2, mask, delta):
     U12corr = ift2(tf.math.conj(U1) * U2, delta_f)
 
     maskcorr = ift2(abs(ft2(mask, delta))**2, delta_f) * delta**2
-    print(maskcorr)
     idx = tf.cast(maskcorr, tf.bool)
-    print(idx)
     c[idx] = U12corr[idx] / maskcorr[idx] * mask[idx]
     return c
 

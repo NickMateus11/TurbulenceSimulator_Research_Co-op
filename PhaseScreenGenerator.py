@@ -77,36 +77,44 @@ class PhaseScreenGenerator():
                 r,c = [i%self.N_p, i//self.N_p]
                 phz = tf.cast(tf.exp(tf.complex(tf.constant(0, tf.float32), \
                     2*np.pi*(fx_SH[r, c]*self.x + fy_SH[r, c]*self.y))), tf.complex64)
-                self.const_SH_phases.write(i, phz)
-
-    def show(self, idx=-1, immediate=True, newFig=True):
-        if newFig:
-            plt.figure()
-        plt.imshow(self.phaseScreens[idx])
-        plt.set_cmap('gray')    
-        plt.colorbar()
-        
-        if immediate:
-            plt.show()
+                self.const_SH_phases.write(i, phz).mark_used()
     
-    def next(self):
-        self.phaseScreens.append(self.subHarmPhaseScreen())
-        return self.phaseScreens[-1]
-
     def subHarmPhaseScreen(self):
-        cn = tf.complex(tf.random.normal( (self.N,self.N) ), tf.random.normal( (self.N,self.N) )) * \
+        cn_hi = tf.complex(tf.random.normal( (self.N,self.N) ), tf.random.normal( (self.N,self.N) )) * \
             tf.cast(tf.math.sqrt(self.PSD_phi) * self.del_f, tf.complex64)
-        phz_hi = tf.math.real(ift2(cn, 1))
+        
+        phz_hi = ift2(cn_hi, 1)
+        phz_hi_real = tf.math.real(phz_hi)
         
         phz_lo = tf.zeros_like(phz_hi, tf.complex64)
         for _ in range(self.N_p):
-            cn = tf.complex(tf.random.normal( (self.N_p,self.N_p) ), tf.random.normal( (self.N_p,self.N_p) )) * \
+            cn_lo = tf.complex(tf.random.normal( (self.N_p,self.N_p) ), tf.random.normal( (self.N_p,self.N_p) )) * \
                 tf.cast(tf.math.sqrt(self.PSD_phi_SH) * self.del_f_SH , tf.complex64)       
             SH = tf.zeros( (self.N,self.N), tf.complex64 )
             for i in range(self.N_p**2): #parallelize
                 r,c = [i%self.N_p, i//self.N_p]
-                SH = SH + cn[r, c] * self.const_SH_phases.read(i)
+                SH = SH + cn_lo[r, c] * self.const_SH_phases.read(i)
             phz_lo = phz_lo + SH
-        phz_lo = tf.math.real(phz_lo) - tf.reduce_mean(tf.math.real(phz_lo))
+        
+        phz_lo = phz_lo - tf.reduce_mean(phz_lo)
+        phz_lo_real = tf.math.real(phz_lo)
 
-        return phz_lo + phz_hi
+        phase = phz_lo + phz_hi
+        phase_real = phz_lo_real-tf.reduce_mean(phz_lo_real) + phz_hi_real
+        return phase_real
+
+    def next(self):
+        self.phaseScreens.append(self.subHarmPhaseScreen())
+        return self.phaseScreens[-1]
+
+    def show(self, idx=-1, grayscale=False, immediate=True, newFig=True):
+        if newFig:
+            plt.figure()
+        # plt.imshow(tf.math.real(self.phaseScreens[idx]))
+        plt.imshow(self.phaseScreens[idx])
+        if grayscale:
+            plt.set_cmap('gray')    
+        plt.colorbar()
+        
+        if immediate:
+            plt.show()

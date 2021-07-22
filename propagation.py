@@ -1,4 +1,5 @@
 import numpy as np
+import tensorflow as tf
 from func_utils import ft2, ift2
 
 
@@ -54,7 +55,8 @@ def fresnel_prop_no_scale(Uin, wvl, delta1, dz):
         delta_f1 * np.linspace(-N//2,N//2-1,N),
         delta_f1 * np.linspace(-N//2,N//2-1,N),
     )
-    Q = np.exp(-1j*k*dz) * np.exp(-1j*PI*wvl*dz*(fX**2 + fY**2))
+    # Q = np.exp(-1j*k*dz) * np.exp(-1j*PI*wvl*dz*(fX**2 + fY**2))
+    Q = np.exp(-1j*PI**2 * 2*dz/k * (fX**2+fY**2))
     Uout = ift2(Q * ft2(Uin, delta1), delta_f1)
     return Uout, x1, y1
 
@@ -71,7 +73,7 @@ def ang_spec_multi_prop(Uin, wvl, delta1, deltan, z, t):
     w = 0.47*N
     sg = np.exp(-nsq**8 / w**16)
 
-    z = np.array([0, *z])
+    z = np.array([0, *z]) if z[0] != 0 else z
     n = len(z)
 
     Delta_z = z[1:] - z[:n-1] 
@@ -102,3 +104,37 @@ def ang_spec_multi_prop(Uin, wvl, delta1, deltan, z, t):
 
     return Uout, xn, yn
     
+
+def ang_spec_multi_prop_no_scale(Uin, wvl, delta, z, t):
+    # evaluate fresnel diffraction integral through ang spec method (ch9), used for multiple partial props
+    N = np.size(Uin, 0)
+    nx, ny = np.meshgrid(
+        np.linspace(-N//2,N//2-1,N),
+        np.linspace(-N//2,N//2-1,N),
+    )    
+    k = 2*PI/wvl
+    nsq = nx**2 + ny**2
+    w = 0.47*N
+    sg = np.exp(-nsq**8 / w**16)
+
+    z = np.array([0, *z]) if z[0] != 0 else z
+    n = len(z)
+
+    Delta_z = z[1:] - z[:n-1] 
+
+    Uout = Uin * t[0,:,:]
+
+    deltaf = 1/ (N*delta)
+    fX = nx * deltaf
+    fY = ny * deltaf 
+    fsq = fX**2 + fY**2
+    for idx in range(n-1):
+        Z = Delta_z[idx]
+        Q2 = np.exp(-1j*(PI**2)*2 * Z / k * fsq)
+        Uout = sg * t[idx+1,:,:] * ift2(Q2 * ft2(Uout, delta), deltaf)
+        # print('no scale', (sg * t[idx+1,:,:])[0])
+    
+    xn = nx * delta
+    yn = ny * delta
+
+    return Uout, xn, yn
