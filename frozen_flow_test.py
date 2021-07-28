@@ -19,6 +19,19 @@ def frozen_flow(phz, vel, delta):
         shifted_phz[:,i] = phz[:, i-int(vel/delta)]
     return shifted_phz
 
+def frozen_flow_ft(phz, vel, delta):
+    N = len(phz)
+    delta_f = 1/(N*delta)
+    fx, _ = np.meshgrid(
+        delta_f * np.linspace(-N//2,N//2-1,N),
+        delta_f * np.linspace(-N//2,N//2-1,N),
+    )
+
+    ft_phz_scr = ft2(phz, delta)
+    shifted_ft_phz_scr = np.exp(-1j * 2*np.pi * fx * vel) * ft_phz_scr
+
+    return np.real(ift2(shifted_ft_phz_scr, delta_f))
+
 def test1():
     N = 2048
     r0 = 0.1
@@ -26,7 +39,7 @@ def test1():
     l0 = 0.01
     D = 2
     delta = D/N
-    speed = 0.01
+    speed = 0.02
 
     x, y = np.meshgrid(
         np.array(list(range(-N//2,N//2))) * delta, 
@@ -44,10 +57,12 @@ def test1():
     im = ax.imshow(phase_screen * mask)
     def animate(i):
         nonlocal phase_screen
-        phase_screen = frozen_flow(phase_screen, speed, delta)
+        # phase_screen = frozen_flow(phase_screen, speed, delta)
+        phase_screen = frozen_flow_ft(phase_screen, speed, delta)
         im.set_data(phase_screen * mask)
-    ani = animation.FuncAnimation(fig, animate)
+    ani = animation.FuncAnimation(fig, animate, interval=200)
     plt.show()
+    plt.colorbar()
 
 if __name__ == '__main__':
     test1()
