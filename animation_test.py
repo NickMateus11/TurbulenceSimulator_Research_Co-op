@@ -14,7 +14,7 @@ mask = circ(x, y, N/2)
 
 fig = plt.figure()
 ax = plt.axes()
-plt.set_cmap('gray')
+# plt.set_cmap('gray')
 im = ax.imshow(np.abs(Uouts[0])**2 * mask)
 
 def func(i):

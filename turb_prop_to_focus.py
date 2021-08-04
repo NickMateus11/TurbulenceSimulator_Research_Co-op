@@ -13,25 +13,11 @@ N = 2048
 r0 = 0.3
 L0 = 100
 l0 = 0.01
-D = 2
+D = 1
 delta = D/N
 
-def test1(n=100):
-    PSG = PhaseScreenGenerator(r0, N, delta, L0, l0)
-
-    PSG.next()
-    PSG.show()
-
-    PSG.next()
-    PSG.show()
-
-    start = Timer()
-    for _ in range(n):
-        PSG.next()
-    print(Timer()-start)
-
-def test2():
-    nscr = 11
+def test1():
+    nscr = 9
     Dz = 1e3
     wvl = 1e-6
 
@@ -65,6 +51,13 @@ def test2():
     # Uout = Uout * np.exp(-1j*np.pi/(wvl*Dz) * (xn**2+yn**2))
     print(Timer()-start)
 
+    fl = 5e3
+    k = 2*PI/wvl
+    lens = np.exp(1j * -k/(2*fl) * (x1**2 + y1**2))
+    Uout = Uout * lens
+
+    Uout,x1,y1 = fresnel_prop_no_scale(Uout, wvl, delta, fl)
+
     plt.figure(1)
     plt.imshow(np.abs(Uout)**2)
     # plt.set_cmap('gray')    
@@ -79,7 +72,6 @@ def test2():
 
 
 if __name__ == '__main__':
-    # test1()
-    test2()
+    test1()
 
 
