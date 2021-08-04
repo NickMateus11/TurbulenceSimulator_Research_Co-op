@@ -9,7 +9,13 @@ class PhaseScreenGenerator():
     
     def __init__(self, r0, N, delta, L0, l0, N_p=3, method='modified von karman'):
         self.r0 = r0
-        self.N = N
+        if type(N) is tuple:
+            self.N = max(N)
+            self.M = min(N)
+            self.isRect = True
+        else:
+            self.N = N
+            self.isRect = False
         self.delta = delta
         self.L0 = L0
         self.l0 = l0
@@ -19,8 +25,8 @@ class PhaseScreenGenerator():
         self.phaseScreens = []
         
         [self.x, self.y] = tf.meshgrid(
-            tf.linspace(-N/2,N/2-1, N) * delta,
-            tf.linspace(-N/2,N/2-1, N) * delta
+            tf.linspace(-self.N/2,self.N/2-1, self.N) * delta,
+            tf.linspace(-self.N/2,self.N/2-1, self.N) * delta
         )
 
         self.ftPhaseScreenOneTimeSetup()
@@ -100,12 +106,20 @@ class PhaseScreenGenerator():
         phz_lo_real = tf.math.real(phz_lo)
 
         phase = phz_lo + phz_hi
-        phase_real = phz_lo_real-tf.reduce_mean(phz_lo_real) + phz_hi_real
+        phase_real = phz_lo_real + phz_hi_real
         return phase_real
 
-    def next(self):
-        self.phaseScreens.append(self.subHarmPhaseScreen())
-        return self.phaseScreens[-1]
+    def next(self, n=1):
+        for _ in range(n):
+            phase_screen = self.subHarmPhaseScreen()
+            if self.isRect:
+                self.phaseScreens.append(phase_screen[:self.M,:])
+            else:
+                self.phaseScreens.append(phase_screen)
+
+        if n == 1:
+            return self.phaseScreens[-1]
+        return np.array(self.phaseScreens[-1:-(n+1):-1])
 
     def show(self, idx=-1, grayscale=False, immediate=True, newFig=True):
         if newFig:

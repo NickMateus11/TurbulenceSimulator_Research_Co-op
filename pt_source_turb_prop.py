@@ -3,7 +3,7 @@ import tensorflow as tf
 from matplotlib import pyplot as plt
 
 from func_utils import circ, cart2pol, corr2_ft
-from propagation import ang_spec_multi_prop
+from propagation import ang_spec_multi_prop, ang_spec_multi_prop_no_scale
 from phase_screen import ft_sub_harm_phase_screen
 
 
@@ -38,10 +38,6 @@ x1, y1 = np.meshgrid(x, y)
 theta, r1 = cart2pol(x1, y1)
 r1 = tf.cast(r1, tf.complex64)
 
-# pt = np.exp(-1j*k/(2*R) * r1**2) / D1**2 \
-#      * np.sinc(x1/D1) * np.sinc(y1/D1)   \
-#      * np.exp(-(r1/(4*D1))**2)
-
 pt = circ(x1, y1, D1)
 
 sg_1 = np.exp(-(x1/(0.47*N*delta1))**16) \
@@ -62,16 +58,14 @@ Uout = np.zeros([N,N])
 # MCF2 = np.zeros([N,N])
 
 r0scrn = np.array([75.7858, 0.3869, 0.3510, 0.3259, 0.3062, 0.2856, 0.2462, 0.2111, 0.2622, 0.2659, 75.7807])
-# r0scrn = np.array([71.6222, 50.0032])
 
 phz = np.empty((nscr, N, N))
 for idxreal in range(nreals):
-    # print(idxreal)
     for idxscr in range(nscr):
         phz_scr = ft_sub_harm_phase_screen(r0scrn[idxscr], N, delta[idxscr], L0, l0)
         phz[idxscr] = phz_scr
     
-    Uout, xn, yn = ang_spec_multi_prop(pt, wvl, delta1, deltan, z, sg*np.exp(1j*phz))
+    Uout, xn, yn = ang_spec_multi_prop_no_scale(pt, wvl, delta1, z, sg*np.exp(1j*phz))
     Uout = Uout * np.exp(-1j*np.pi/(wvl*R) * (xn**2+yn**2))
     # MCF2 = MCF2 + corr2_ft(Uout, Uout, mask, deltan)
 

@@ -13,7 +13,7 @@ from propagation import *
 
 def frozen_flow(phz, vel, delta):
     # horizontal flow only
-    N = len(phz)
+    N = len(phz[0])
     shifted_phz = np.empty_like(phz)
     for i in range(N-1,-1,-1):
         shifted_phz[:,i] = phz[:, i-int(vel/delta)]
@@ -34,6 +34,7 @@ def frozen_flow_ft(phz, vel, delta):
 
 def test1():
     N = 2048
+    M = 512
     r0 = 0.1
     L0 = 100
     l0 = 0.01
@@ -43,11 +44,11 @@ def test1():
 
     x, y = np.meshgrid(
         np.array(list(range(-N//2,N//2))) * delta, 
-        np.array(list(range(-N//2,N//2))) * delta
+        np.array(list(range(-M//2,M//2))) * delta
     )
-    mask = circ(x,y,D/2)
+    mask = circ(x,y,D/(N/M))
 
-    PSG = PhaseScreenGenerator(r0, N, delta, L0, l0)
+    PSG = PhaseScreenGenerator(r0, (N,M), delta, L0, l0)
     phase_screen = PSG.next().numpy()
     # normalize to 0-1
     phase_screen = (phase_screen-np.min(phase_screen)) / (np.max(phase_screen)-np.min(phase_screen))
@@ -57,12 +58,11 @@ def test1():
     im = ax.imshow(phase_screen * mask)
     def animate(i):
         nonlocal phase_screen
-        # phase_screen = frozen_flow(phase_screen, speed, delta)
-        phase_screen = frozen_flow_ft(phase_screen, speed, delta)
+        phase_screen = frozen_flow(phase_screen, speed, delta)
+        # phase_screen = frozen_flow_ft(phase_screen, speed, delta)
         im.set_data(phase_screen * mask)
     ani = animation.FuncAnimation(fig, animate, interval=200)
     plt.show()
-    plt.colorbar()
 
 if __name__ == '__main__':
     test1()
