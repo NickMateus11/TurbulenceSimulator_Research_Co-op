@@ -9,7 +9,7 @@ from PhaseScreenGenerator import PhaseScreenGenerator
 from func_utils import *
 from propagation import *
 
-N = 2048
+N = 1024
 r0 = 0.3
 L0 = 100
 l0 = 0.01
@@ -19,19 +19,19 @@ delta = D/N
 def test1(n=100):
     PSG = PhaseScreenGenerator(r0, N, delta, L0, l0)
 
-    PSG.next()
-    PSG.show()
+    # PSG.next()
+    # PSG.show()
 
-    PSG.next()
-    PSG.show()
+    # PSG.next()
+    # PSG.show()
 
     start = Timer()
     for _ in range(n):
-        PSG.next()
+        phz = PSG.next()
     print(Timer()-start)
 
 def test2():
-    nscr = 11
+    nscr = 5
     Dz = 1e3
     wvl = 1e-6
 
@@ -49,7 +49,7 @@ def test2():
     sg = np.tile(sg, [nscr, 1, 1])
 
     # TODO: Gaussian Beam
-    Uin = circ(x1, y1, D)
+    Uin = circ(x1, y1, D*0.9)
 
     print(Timer()-start)
     start = Timer()
@@ -75,11 +75,17 @@ def test2():
     # plt.set_cmap('gray')    
     plt.colorbar()
 
+    plt.figure(3)
+    plt.imshow(np.abs(Uin)**2)
+    # plt.set_cmap('gray')    
+    plt.clim(0,2)
+    plt.colorbar()
+
     plt.show()
 
 
 if __name__ == '__main__':
-    # test1()
-    test2()
+    test1()
+    # test2()
 
 

@@ -2,7 +2,7 @@ import numpy as np
 import tensorflow as tf
 from matplotlib import pyplot as plt
 
-from func_utils import cart2pol, mesh
+from func_utils import cart2pol, circ
 from propagation import ang_spec_multi_prop
 
 N = 512

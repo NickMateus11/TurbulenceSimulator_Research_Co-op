@@ -8,7 +8,7 @@ from phase_screen import ft_sub_harm_phase_screen
 
 
 N = 512
-nscr = 11
+nscr = 5
 delta1 = 10e-3
 deltan = 10e-3
 
@@ -16,7 +16,7 @@ wvl = 1e-6
 k = 2*np.pi/wvl
 Dz = 50e3
 R = Dz
-D2 = 0.5
+D2 = 0.2
 D1 = wvl*Dz / (4*D2)
 
 l0 = 0.01
@@ -57,7 +57,7 @@ Uout = np.zeros([N,N])
 # mask = circ(xn/D2, yn/D2, 1)
 # MCF2 = np.zeros([N,N])
 
-r0scrn = np.array([75.7858, 0.3869, 0.3510, 0.3259, 0.3062, 0.2856, 0.2462, 0.2111, 0.2622, 0.2659, 75.7807])
+r0scrn = np.array([0.3869, 0.3869, 0.3510, 0.3259, 0.3062, 0.2856, 0.2462, 0.2111, 0.2622, 0.2659, 0.3869])
 
 phz = np.empty((nscr, N, N))
 for idxreal in range(nreals):
@@ -73,12 +73,12 @@ for idxreal in range(nreals):
 
 plt.figure(1)
 plt.imshow(np.abs(Uout)**2)
-plt.set_cmap('gray')    
+# plt.set_cmap('gray')    
 plt.colorbar()
 
 plt.figure(2)
 plt.imshow(np.angle(Uout))
-plt.set_cmap('gray')    
+# plt.set_cmap('gray')    
 plt.colorbar()
 
 plt.show()

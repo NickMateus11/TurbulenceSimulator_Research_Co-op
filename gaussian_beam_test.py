@@ -31,7 +31,7 @@ def simple_prop_test():
     plt.show()
 
 def continuous_prop_test():
-    # analytical prop
+    # analytical prop first
     z_span = 10
     G = GaussianBeam(wvl, w0, 0, delta, N)
     
@@ -53,7 +53,7 @@ def continuous_prop_test():
     y_scale = waists[-1] * 2
     plt.ylim(-y_scale, y_scale)
     
-    # fresnel prop
+    # fresnel prop (numerical)
     G = GaussianBeam(wvl, w0, 0, delta, N)
     n = 20
 

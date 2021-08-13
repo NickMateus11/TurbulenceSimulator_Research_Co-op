@@ -56,11 +56,13 @@ def test1():
     fig = plt.figure()
     ax = plt.axes()
     im = ax.imshow(phase_screen * mask)
+    # im = ax.imshow(phase_screen)
     def animate(i):
         nonlocal phase_screen
         phase_screen = frozen_flow(phase_screen, speed, delta)
         # phase_screen = frozen_flow_ft(phase_screen, speed, delta)
         im.set_data(phase_screen * mask)
+        # im.set_data(phase_screen)
     ani = animation.FuncAnimation(fig, animate, interval=200)
     plt.show()
 

@@ -11,13 +11,13 @@ from propagation import *
 
 N = 2048
 r0 = 0.3
-L0 = 100
+L0 = 1e3
 l0 = 0.01
 D = 1
 delta = D/N
 
 def test1():
-    nscr = 9
+    nscr = 5
     Dz = 1e3
     wvl = 1e-6
 

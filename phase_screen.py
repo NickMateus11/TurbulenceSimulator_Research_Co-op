@@ -60,9 +60,12 @@ def ft_phase_screen(r0, N, delta, L0, l0, method='modified von karman'):
     return phz
 
 @tf.function
-def ft_sub_harm_phase_screen(r0, N, delta, L0, l0, method='modified von karman'):
-    N_p = 3
+def ft_sub_harm_phase_screen(r0, N, delta, L0, l0, method='modified von karman', return_all=False):
+    r0 = tf.cast(r0, tf.float64)
+    delta = tf.cast(delta, tf.float64)
     
+    N_p = 3
+
     D = N*delta
     phz_hi = ft_phase_screen(r0, N, delta, L0, l0, method)
 
@@ -106,5 +109,8 @@ def ft_sub_harm_phase_screen(r0, N, delta, L0, l0, method='modified von karman')
     phz_lo = tf.math.real(phz_lo) - tf.reduce_mean(tf.math.real(phz_lo))
 
     phz_screen = phz_lo + phz_hi
+
+    if return_all:
+        return phz_screen, phz_hi, phz_lo
     return phz_screen
 

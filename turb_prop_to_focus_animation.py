@@ -27,8 +27,8 @@ def test1():
     M = 1024
     nscr = 5
     n_props = 60
-    r0 = 0.3
-    L0 = 1000
+    r0 = 0.35
+    L0 = 1e3
     l0 = 0.01
     wvl = 1e-6
     Dz = 1e3
