@@ -12,6 +12,11 @@ from func_utils import *
 from propagation import *
 
 
+'''
+    Animate propagations through turbulence - phase screens are shifted after each propagation
+    Output is field intensity at observation plane
+'''
+
 def frozen_flow_multi(phzs, vels, delta):
     # horizontal flow only
     N = len(phzs[0,0])

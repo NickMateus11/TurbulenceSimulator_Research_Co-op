@@ -10,6 +10,10 @@ from PhaseScreenGenerator import PhaseScreenGenerator
 from func_utils import *
 from propagation import *
 
+'''
+    Animate a phase screen being shifted using frozen flow model - no interpolation for non-integer grid size shifting
+    Both simple pixel shifting and FT (multiply by complex expontial in spatial-frequency) are attempted
+'''
 
 def frozen_flow(phz, vel, delta):
     # horizontal flow only

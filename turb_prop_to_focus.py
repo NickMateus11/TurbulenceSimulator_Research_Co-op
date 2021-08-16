@@ -9,6 +9,10 @@ from PhaseScreenGenerator import PhaseScreenGenerator
 from func_utils import *
 from propagation import *
 
+'''
+    Propagate beam through turbulence - focus through lens to output plane
+'''
+
 N = 2048
 r0 = 0.3
 L0 = 1e3

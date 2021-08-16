@@ -11,6 +11,10 @@ from PhaseScreenGenerator import PhaseScreenGenerator
 from func_utils import *
 from propagation import *
 
+'''
+    Animate propagations through turbulence - phase screens are shifted after each propagation
+    Output is lens 'focused' beam at observation plane
+'''
 
 def frozen_flow_multi(phzs, vels, delta):
     # horizontal flow only

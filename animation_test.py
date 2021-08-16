@@ -2,6 +2,12 @@ from func_utils import circ
 import numpy as np
 from matplotlib import pyplot as plt, animation
 
+'''
+    Load numpy array from file (N x N x m) - ie: m frames of N x N data
+    Animate the data using matplotlib animation module
+'''
+
+
 Uouts = np.load('speckle.npy')
 # Uouts = np.load('speckle_focused.npy')
 n = len(Uouts)

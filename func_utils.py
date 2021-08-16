@@ -4,6 +4,10 @@ from matplotlib import pyplot as plt
 import tensorflow as tf
 
 
+'''
+    Generally useful functions related to FT computations, and matplotlib wrappers
+'''
+
 def str_fnc2_ft(ph, mask, delta):
 
     N = (ph.shape)[0]
