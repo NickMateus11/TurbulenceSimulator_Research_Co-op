@@ -6,9 +6,9 @@ import numpy as np
 from timeit import default_timer as Timer
 from matplotlib import pyplot as plt, animation  
 
-from PhaseScreenGenerator import PhaseScreenGenerator
-from func_utils import *
-from propagation import *
+from modules.PhaseScreenGenerator import PhaseScreenGenerator
+from modules.func_utils import *
+from modules.propagation import *
 
 '''
     Animate a phase screen being shifted using frozen flow model - no interpolation for non-integer grid size shifting
@@ -71,6 +71,7 @@ def test1():
     plt.show()
 
 if __name__ == '__main__':
+
     test1()
 
 

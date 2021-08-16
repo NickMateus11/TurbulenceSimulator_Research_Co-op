@@ -5,9 +5,9 @@
 import numpy as np
 from timeit import default_timer as Timer
 
-from PhaseScreenGenerator import PhaseScreenGenerator
-from func_utils import *
-from propagation import *
+from modules.PhaseScreenGenerator import PhaseScreenGenerator
+from modules.func_utils import *
+from modules.propagation import *
 
 N = 1024
 r0 = 0.3
@@ -85,6 +85,7 @@ def test2():
 
 
 if __name__ == '__main__':
+
     test1()
     # test2()
 

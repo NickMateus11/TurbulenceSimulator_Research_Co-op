@@ -2,7 +2,7 @@ import tensorflow as tf
 import numpy as np
 from matplotlib import pyplot as plt
 
-from func_utils import *
+from modules.func_utils import *
 
 
 class PhaseScreenGenerator():

@@ -1,7 +1,7 @@
 
 import numpy as np
 from tensorflow.python.framework.ops import Tensor
-from func_utils import ft2, ift2, cart2pol
+from modules.func_utils import ft2, ift2, cart2pol
 from matplotlib import pyplot as plt
 import tensorflow as tf
 

@@ -5,9 +5,9 @@
 import numpy as np
 from timeit import default_timer as Timer
 
-from PhaseScreenGenerator import PhaseScreenGenerator
-from func_utils import *
-from propagation import *
+from modules.PhaseScreenGenerator import PhaseScreenGenerator
+from modules.func_utils import *
+from modules.propagation import *
 
 '''
     Propagate beam through turbulence - focus through lens to output plane
@@ -76,6 +76,7 @@ def test1():
 
 
 if __name__ == '__main__':
+
     test1()
 
 

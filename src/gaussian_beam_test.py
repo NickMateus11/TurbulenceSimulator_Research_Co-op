@@ -1,8 +1,8 @@
 from matplotlib import pyplot as plt
 import numpy as np
-from gaussian_beam import GaussianBeam
-from propagation import fresnel_prop, fresnel_prop_no_scale
-from func_utils import plot_wave_slice
+from modules.gaussian_beam import GaussianBeam
+from modules.propagation import fresnel_prop, fresnel_prop_no_scale
+from modules.func_utils import plot_wave_slice
 
 
 N = 512
@@ -69,4 +69,5 @@ def main():
     continuous_prop_test()
 
 if __name__ == '__main__':
+
     main()

@@ -1,7 +1,7 @@
 from matplotlib import pyplot as plt
 import numpy as np
-from func_utils import plot_wave_slice
-from propagation import fresnel_prop_no_scale
+from modules.func_utils import plot_wave_slice
+from modules.propagation import fresnel_prop_no_scale
 
 
 PI = np.pi

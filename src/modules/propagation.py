@@ -1,6 +1,6 @@
 import numpy as np
 import tensorflow as tf
-from func_utils import ft2, ift2
+from modules.func_utils import ft2, ift2
 
 
 PI = np.pi

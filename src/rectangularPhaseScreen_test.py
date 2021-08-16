@@ -1,4 +1,4 @@
-from PhaseScreenGenerator import PhaseScreenGenerator
+from modules.PhaseScreenGenerator import PhaseScreenGenerator
 from matplotlib import pyplot as plt
 
 
@@ -19,4 +19,5 @@ def test1():
 
 
 if __name__ == '__main__':
+    
     test1()

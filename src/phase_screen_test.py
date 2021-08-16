@@ -5,10 +5,10 @@ from timeit import default_timer as Timer
 import tensorflow as tf
 import time
 
-from gaussian_beam import GaussianBeam
-from func_utils import str_fnc2_ft, circ, plot_slice, mesh
-from propagation import fresnel_prop_no_scale
-from phase_screen import ft_sub_harm_phase_screen, ft_phase_screen
+from modules.gaussian_beam import GaussianBeam
+from modules.func_utils import str_fnc2_ft, circ, plot_slice, mesh
+from modules.propagation import fresnel_prop_no_scale
+from modules.phase_screen import ft_sub_harm_phase_screen, ft_phase_screen
 
 
 # slow because converting tensors to variables?
@@ -224,5 +224,4 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-print('Done')
+    print('Done')
