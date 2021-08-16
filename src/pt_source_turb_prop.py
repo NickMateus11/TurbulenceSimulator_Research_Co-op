@@ -4,7 +4,7 @@ from matplotlib import pyplot as plt
 
 from modules.func_utils import circ, cart2pol, corr2_ft
 from modules.propagation import ang_spec_multi_prop, ang_spec_multi_prop_no_scale
-from modules.phase_screen import ft_sub_harm_phase_screen
+from modules.phase_screen_generation import ft_sub_harm_phase_screen
 
 
 def main():

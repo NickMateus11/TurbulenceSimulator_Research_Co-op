@@ -86,9 +86,9 @@ def test1():
 
     filename = 'speckle.npy'
     if 'src' in os.getcwd().split('\\'):
-        np.save(f'../savedData/{filename}', Uouts)
+        np.save(f'../saved_data/{filename}', Uouts)
     else:
-        np.save(f'./savedData/{filename}', Uouts)
+        np.save(f'./saved_data/{filename}', Uouts)
 
     def animate(i):
         im_Uout.set_data(np.abs(Uouts[i])**2 * mask)

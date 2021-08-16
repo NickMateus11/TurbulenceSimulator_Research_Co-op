@@ -30,8 +30,8 @@ def simple_prop_test():
 
     plt.show()
 
-def continuous_prop_test():
-    # analytical prop first
+def beam_waist_prop_test():
+    # analytical prop
     z_span = 10
     G = GaussianBeam(wvl, w0, 0, delta, N)
     
@@ -53,11 +53,9 @@ def continuous_prop_test():
     y_scale = waists[-1] * 2
     plt.ylim(-y_scale, y_scale)
     
-    # fresnel prop (numerical)
+    # fresnel prop
     G = GaussianBeam(wvl, w0, 0, delta, N)
     n = 20
-
-    GaussianBeam.plot_waist_over_distance_symmetric(G.wave, G.x, wvl, delta, z_span, n)
     
     GaussianBeam.plot_waist_over_distance(G.wave, G.x, wvl, delta, z_span/2, n)
     GaussianBeam.plot_waist_over_distance(G.wave, G.x, wvl, delta, -z_span/2, n, new_fig=False)
@@ -66,8 +64,7 @@ def continuous_prop_test():
 
 def main():
     # simple_prop_test()
-    continuous_prop_test()
+    beam_waist_prop_test()
 
 if __name__ == '__main__':
-
     main()

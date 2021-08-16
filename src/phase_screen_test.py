@@ -1,4 +1,3 @@
-import multiprocessing
 from matplotlib import pyplot as plt
 import numpy as np
 from timeit import default_timer as Timer
@@ -8,7 +7,7 @@ import time
 from modules.gaussian_beam import GaussianBeam
 from modules.func_utils import str_fnc2_ft, circ, plot_slice, mesh
 from modules.propagation import fresnel_prop_no_scale
-from modules.phase_screen import ft_sub_harm_phase_screen, ft_phase_screen
+from modules.phase_screen_generation import ft_sub_harm_phase_screen, ft_phase_screen
 
 
 # slow because converting tensors to variables?
@@ -51,9 +50,7 @@ def tensorflow_test(n_scr):
     start = Timer()
     for i in range(n_scr):
     #    out = out.write(i, ft_sub_harm_phase_screen(r0, N, delta, L0, l0))
-    #    out[i] = ft_phase_screen(r0, N, delta, L0, l0)
        out[i] = ft_sub_harm_phase_screen(r0, N, delta, L0, l0)
-    #    print(out[i].device)
     print(Timer()-start)
     # phz = out[0]
     # phz = out.stack() # careful if (n_scr * N^2) exeeds memory
@@ -99,22 +96,22 @@ def phase_screen_gen():
     plt.show()
 
 
-def phase_screen_calcs(args):
-    N, mask, L0, l0, r0, delta = args
-    mask = tf.cast(mask, tf.complex64)
-
-    phz1 = ft_sub_harm_phase_screen(r0, N, delta, L0, l0)
-    phz1 = tf.cast(phz1, tf.complex64)
-    D1 = str_fnc2_ft(phz1, mask, delta)
-
-    phz2 = ft_phase_screen(r0, N, delta, L0, l0)
-    phz2 = tf.cast(phz2, tf.complex64)
-    D2 = str_fnc2_ft(phz2, mask, delta)
-
-    return D1, D2
-
-
 def phase_screen_statistics():
+
+    def phase_screen_calcs(args):
+        N, mask, L0, l0, r0, delta = args
+        mask = tf.cast(mask, tf.complex64)
+
+        phz1 = ft_sub_harm_phase_screen(r0, N, delta, L0, l0)
+        phz1 = tf.cast(phz1, tf.complex64)
+        D1 = str_fnc2_ft(phz1, mask, delta)
+
+        phz2 = ft_phase_screen(r0, N, delta, L0, l0)
+        phz2 = tf.cast(phz2, tf.complex64)
+        D2 = str_fnc2_ft(phz2, mask, delta)
+
+        return D1, D2
+
     D = 2
     r0 = 0.1
     N = 256
@@ -137,16 +134,9 @@ def phase_screen_statistics():
 
     start = time.time()
     averages = [phase_screen_calcs( [N, mask, L0, l0, r0, delta] ) for _ in range(N_phase_screens)]
-    print(time.time() - start)
-
-    # start = time.time()
-    # with multiprocessing.Pool(processes=4) as pool:
-    #     averages = pool.map(phase_screen_calcs, [(N, mask, L0, l0, r0, delta)]*N_phase_screens)
-    #     # averages = pool.starmap(phase_screen_calcs, [(N, mask, L0, l0, r0, delta)]*N_phase_screens)
-    # print(time.time() - start)    
+    print(time.time() - start) 
 
     for i in range(N_phase_screens):
-        # a1, a2 = averages.get(timeout=20)
         a1, a2 = averages[i]
         avgD1 += a1/N_phase_screens
         avgD2 += a2/N_phase_screens
@@ -175,7 +165,6 @@ def phase_screen_prop():
     L0 = 100
     l0 = 0.01
 
-
     delta = D/N
     x = np.linspace(-N/2,N/2-1, N) * delta
     y = np.linspace(-N/2,N/2-1, N) * delta
@@ -185,7 +174,6 @@ def phase_screen_prop():
     # mask  = circ(x, y, D*0.9)
     # phz *= mask
 
-    # N = 512
     wvl = 600e-9
     w0 = 1e-3
     dz = 5
@@ -219,8 +207,6 @@ def main():
     # plt.set_cmap('gray')    
     # plt.colorbar()
     # plt.show()
-
-
 
 if __name__ == '__main__':
     main()

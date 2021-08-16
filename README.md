@@ -21,7 +21,18 @@ The [Numerical Simulation of Optical Wave Propagation with Examples in MATLAB](h
     ```
  - Install CUDA (GPU support for Tensorflow) - [instructions](https://tensorflow-object-detection-api-tutorial.readthedocs.io/en/latest/install.html#gpu-support-optional)
 
- ## Execution ##
 
+## Execution ##
 
- ## Example Output ##
+As scripts are mostly sandboxed/testing simulator modules, execution is as easy as running any of the `./src/*.py` scripts. Ex: 
+```
+ > python ./src/gaussian_beam_test.py   
+```
+
+## Architechure ##
+
+## Pythonic Details ##
+
+## Example Output ##
+
+## TODOs ##

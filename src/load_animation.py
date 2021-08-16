@@ -11,9 +11,9 @@ import os
 def main():
     filename = 'speckle_focused.npy'
     if 'src' in os.getcwd().split('\\'):
-        Uouts = np.load(f'../savedData/{filename}')
+        Uouts = np.load(f'../saved_data/{filename}')
     else:
-        Uouts = np.load(f'./savedData/{filename}')
+        Uouts = np.load(f'./saved_data/{filename}')
     n = len(Uouts)
     N = len(Uouts[0])
 
