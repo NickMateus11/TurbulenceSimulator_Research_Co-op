@@ -132,3 +132,41 @@ class PhaseScreenGenerator():
         
         if immediate:
             plt.show()
+
+    @staticmethod
+    def frozen_flow(phz, vel, delta):
+        # horizontal flow only
+        N = len(phz[0])
+        shifted_phz = np.empty_like(phz)
+        for i in range(N-1,-1,-1):
+            shifted_phz[:,i] = phz[:, i-int(vel/delta)]
+        return shifted_phz
+
+    @staticmethod
+    def frozen_flow_multi(phzs, vels, delta):
+        # horizontal flow only
+        N = len(phzs[0,0])
+        shifted_phzs = np.empty_like(phzs)
+        for i in range(N-1,-1,-1):
+            for j in range(len(vels)):
+                idx = i-int(vels[j]/delta)
+                shifted_phzs[j,:,i] = phzs[j,:, idx%N if idx>0 else idx]
+        return shifted_phzs
+
+    @staticmethod
+    def frozen_flow_ft(phz, vel, delta):
+        # square phase screen only
+        if len(phz) != len(phz[0]):
+            return phz
+            
+        N = len(phz)
+        delta_f = 1/(N*delta)
+        fx, _ = np.meshgrid(
+            delta_f * np.linspace(-N//2,N//2-1,N),
+            delta_f * np.linspace(-N//2,N//2-1,N),
+        )
+
+        ft_phz_scr = ft2(phz, delta)
+        shifted_ft_phz_scr = np.exp(-1j * 2*np.pi * fx * vel) * ft_phz_scr
+
+        return np.real(ift2(shifted_ft_phz_scr, delta_f))
