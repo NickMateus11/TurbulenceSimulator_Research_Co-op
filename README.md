@@ -33,11 +33,11 @@ As scripts are mostly sandboxed/testing simulator modules, execution is as easy 
 
 ### Block Diagram: ###
 
-![block diagram](.\\images\\SimplifiedTurbulenceBlockDiagram.png)
+![block diagram](./images/SimplifiedTurbulenceBlockDiagram.png)
 
 ### Block Details: ###
 
-![block details](.\\images\\TurbulenceBlockDiagramIndexTables.png)
+![block details](./images/TurbulenceBlockDiagramIndexTables.png)
 
 
 ## Pythonic Details ##
@@ -55,18 +55,18 @@ There are 2 main execution flows within Tensorflow - Eager or Graph execution. E
 
 ## Example Output (WIP: Description/Labelling needed) ##
 
-<img src=".\\images\\lowFreq.png" width="30%">
-<img src=".\\images\\highFreq.png" width="30%">
-<img src=".\\images\\phasescreen.png" width="30%">
+<img src="./images/lowFreq.png" width="30%">
+<img src="./images/highFreq.png" width="30%">
+<img src="./images/phasescreen.png" width="30%">
 
-![low/no turbulence](.\\images\\phaseScreenStats.png)
+![low/no turbulence](./images/phaseScreenStats.png)
 
-![low/no turbulence](.\\images\\frozen_flow_rect.gif)
+![low/no turbulence](./images/frozen_flow_rect.gif)
 
-![low/no turbulence](.\\images\\noTurbulence.png)
-![low/no turbulence](.\\images\\mildTurbulence.png)
+![low/no turbulence](./images/noTurbulence.png)
+![low/no turbulence](./images/mildTurbulence.png)
 
-![low/no turbulence](.\\images\\animation_focused.gif)
+![low/no turbulence](./images/animation_focused.gif)
 
 
 ## TODOs ##
