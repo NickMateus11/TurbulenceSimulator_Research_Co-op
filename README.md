@@ -55,8 +55,8 @@ There are 2 main execution flows within Tensorflow - Eager or Graph execution. E
 
 ## Example Output (WIP: Description/Labelling needed) ##
 
-<img src="./images/lowFreq.png" width="30%">
-<img src="./images/highFreq.png" width="30%">
+<img src="./images/lowfreq.png" width="30%">
+<img src="./images/highfreq.png" width="30%">
 <img src="./images/phasescreen.png" width="30%">
 
 ![low/no turbulence](./images/phaseScreenStats.png)
