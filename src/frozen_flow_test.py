@@ -12,7 +12,8 @@ from modules.PhaseScreenGenerator import PhaseScreenGenerator
 from modules.func_utils import *
 from modules.propagation import *
 
-def test1():
+
+def frozen_flow_phase_screen_TEST():
     '''
     Animate a phase screen being shifted using frozen flow model - no interpolation for non-integer grid size shifting
     Both simple pixel shifting and FT (multiply by complex expontial in spatial-frequency) are attempted
@@ -51,7 +52,7 @@ def test1():
     plt.show()
 
 
-def test2():
+def frozen_flow_propagations_TEST():
     '''
     Animate propagations through turbulence - phase screens are shifted after each propagation
     Output is field intensity at observation plane
@@ -127,8 +128,8 @@ def test2():
 
 if __name__ == '__main__':
 
-    # test1()
+    # frozen_flow_phase_screen_TEST()
     
-    test2()
+    frozen_flow_propagations_TEST()
 
 

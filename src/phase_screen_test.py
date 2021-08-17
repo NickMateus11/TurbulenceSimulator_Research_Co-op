@@ -5,8 +5,9 @@ import tensorflow as tf
 import time
 
 from modules.gaussian_beam import GaussianBeam
+from modules.PhaseScreenGenerator import PhaseScreenGenerator
 from modules.func_utils import str_fnc2_ft, circ, plot_slice, mesh
-from modules.propagation import fresnel_prop_no_scale
+from modules.propagation import fresnel_prop_no_scale, ang_spec_multi_prop_no_scale
 from modules.phase_screen_generation import ft_sub_harm_phase_screen, ft_phase_screen
 
 
@@ -158,38 +159,83 @@ def phase_screen_statistics():
     plt.show()    
 
 
-def phase_screen_prop():
-    D = 2
-    r0 = 0.1
-    N = 256
+def PhaseScreenGenerator_generation_speed_TEST(n=100):
+    N = 1024
+    r0 = 0.3
     L0 = 100
     l0 = 0.01
-
+    D = 2
     delta = D/N
-    x = np.linspace(-N/2,N/2-1, N) * delta
-    y = np.linspace(-N/2,N/2-1, N) * delta
 
-    phz = ft_sub_harm_phase_screen(r0, N, delta, L0, l0)
-    
-    # mask  = circ(x, y, D*0.9)
-    # phz *= mask
+    PSG = PhaseScreenGenerator(r0, N, delta, L0, l0)
 
-    wvl = 600e-9
-    w0 = 1e-3
-    dz = 5
-    L = 5*w0
-    delta = L/N
+    PSG.next()
+    PSG.show()
 
-    [x1,y1] = np.meshgrid(
-        delta * np.linspace(-N//2,N//2-1,N),
-        delta * np.linspace(-N//2,N//2-1,N),
+    PSG.next()
+    PSG.show()
+
+    start = Timer()
+    for _ in range(n):
+        phz = PSG.next()
+    print(Timer()-start)
+
+def PhaseScreenGenerator_single_propagation_TEST():
+    N = 1024
+    r0 = 0.3
+    L0 = 100
+    l0 = 0.01
+    D = 2
+    delta = D/N
+    nscr = 5
+    Dz = 1e3
+    wvl = 1e-6
+
+    start = Timer()
+
+    z = np.array(range(nscr)) * Dz / (nscr-1)
+    PSG = PhaseScreenGenerator(r0, N, delta, L0, l0)
+
+    x1, y1 = np.meshgrid(
+        np.array(list(range(-N//2,N//2))) * delta, 
+        np.array(list(range(-N//2,N//2))) * delta
     )
 
-    G = GaussianBeam(wvl, w0, 0, delta, N)
-    g_prop = G.wave * phz
-    # g_prop2,x2,y2 = fresnel_prop_no_scale(g_prop, wvl, delta, 5)
-    # mesh(x2,y2,np.abs(g_prop2)**2)
-    mesh(x1,y1,np.abs(g_prop)**2)
+    sg = np.exp(-(x1/(0.47*N*delta))**16) * np.exp(-(y1/(0.47*N*delta))**16)
+    sg = np.tile(sg, [nscr, 1, 1])
+
+    # TODO: Gaussian Beam
+    Uin = circ(x1, y1, D*0.9)
+
+    print(Timer()-start)
+    start = Timer()
+
+    phz = np.empty([nscr, N, N])
+    for i in range(nscr):
+        phz[i] = PSG.next()
+    
+    print(Timer()-start)
+    start = Timer()
+    
+    Uout, xn, yn = ang_spec_multi_prop_no_scale(Uin, wvl, delta, z, sg*np.exp(1j*phz))
+    # Uout = Uout * np.exp(-1j*np.pi/(wvl*Dz) * (xn**2+yn**2))
+    print(Timer()-start)
+
+    plt.figure(1)
+    plt.imshow(np.abs(Uout)**2)
+    # plt.set_cmap('gray')    
+    plt.colorbar()
+
+    plt.figure(2)
+    plt.imshow(np.angle(Uout))
+    # plt.set_cmap('gray')    
+    plt.colorbar()
+
+    plt.figure(3)
+    plt.imshow(np.abs(Uin)**2)
+    # plt.set_cmap('gray')    
+    plt.clim(0,2)
+    plt.colorbar()
 
     plt.show()
 
@@ -201,12 +247,11 @@ def main():
 
     # phase_screen_prop()
 
-    # res, x, y = tensorflow_test(100)
-    # plt.figure(1)
-    # plt.imshow(res[0], extent=[x[0], x[-1], y[-1], y[0]])
-    # plt.set_cmap('gray')    
-    # plt.colorbar()
-    # plt.show()
+    # tensorflow_test(100)
+
+    # PhaseScreenGenerator_generation_speed_TEST
+
+    # PhaseScreenGenerator_single_propagation_TEST
 
 if __name__ == '__main__':
     main()
