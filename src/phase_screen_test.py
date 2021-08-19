@@ -180,6 +180,7 @@ def PhaseScreenGenerator_generation_speed_TEST(n=100):
         phz = PSG.next()
     print(Timer()-start)
 
+
 def PhaseScreenGenerator_single_propagation_TEST():
     N = 1024
     r0 = 0.3
@@ -240,19 +241,36 @@ def PhaseScreenGenerator_single_propagation_TEST():
     plt.show()
 
 
+def rectangular_phase_screen_test():
+    N = 4096
+    M = 1024
+    r0 = 0.1
+    L0 = 100
+    l0 = 0.01
+    D = 2
+    delta = D/N
+    PSG = PhaseScreenGenerator(r0, (N,M), delta, L0, l0)
+    rect_phase_screen = PSG.next()
+
+    plt.imshow(rect_phase_screen)
+    plt.set_cmap('gray')
+    plt.show()
+
+
 def main():
     # phase_screen_gen()
 
-    phase_screen_statistics()
+    # phase_screen_statistics()
 
     # phase_screen_prop()
 
     # tensorflow_test(100)
 
-    # PhaseScreenGenerator_generation_speed_TEST
+    PhaseScreenGenerator_generation_speed_TEST()
 
-    # PhaseScreenGenerator_single_propagation_TEST
+    # PhaseScreenGenerator_single_propagation_TEST()
+
+    # rectangular_phase_screen_test()
 
 if __name__ == '__main__':
     main()
-    print('Done')

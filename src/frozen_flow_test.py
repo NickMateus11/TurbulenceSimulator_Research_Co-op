@@ -128,7 +128,7 @@ def frozen_flow_propagations_TEST():
 
 if __name__ == '__main__':
 
-    # frozen_flow_phase_screen_TEST()
+    frozen_flow_phase_screen_TEST()
     
     frozen_flow_propagations_TEST()
 
