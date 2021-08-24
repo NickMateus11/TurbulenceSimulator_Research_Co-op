@@ -3,12 +3,12 @@ import numpy as np
 from matplotlib import pyplot as plt, animation
 import os
 
-'''
-    Load numpy array from file (N x N x m) - ie: m frames of N x N data
-    Animate the data using matplotlib animation module
-'''
 
 def main():
+    '''
+        Load numpy array from file (N x N x m) - ie: m frames of N x N data
+        Animate the data using matplotlib animation module
+    '''
     filename = 'speckle_focused.npy'
     if 'src' in os.getcwd().split('\\'):
         Uouts = np.load(f'../saved_data/{filename}')

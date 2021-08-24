@@ -6,6 +6,10 @@ from modules.func_utils import plot_wave_slice
 
 
 def main():
+    '''
+    Gaussian beam propagation a short distance, then focuse through a lens.
+    Notice the focusing of the beam at about 8 units, then the beam begins to grow in waist size again.
+    '''
     PI = np.pi
 
     N = 512

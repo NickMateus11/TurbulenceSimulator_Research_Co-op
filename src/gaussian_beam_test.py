@@ -14,6 +14,10 @@ delta = L/N
 
 
 def simple_prop_test():
+    '''
+    Shows Gaussian beam slice before and after propagation. Take note of the beam waste as it increases after propagation.
+    Comparison of theory and fresnel (numerical) propagation results.
+    '''
     G = GaussianBeam(wvl, w0, 0, delta, N)
 
     # original
@@ -31,6 +35,9 @@ def simple_prop_test():
     plt.show()
 
 def beam_waist_prop_test():
+    '''
+    Plots beam waist as a function of prop distance. Notice the saddle shape.
+    '''
     # analytical prop
     z_span = 10
     G = GaussianBeam(wvl, w0, 0, delta, N)
@@ -63,7 +70,7 @@ def beam_waist_prop_test():
     plt.show()
 
 def main():
-    # simple_prop_test()
+    simple_prop_test()
     beam_waist_prop_test()
 
 if __name__ == '__main__':

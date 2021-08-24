@@ -11,57 +11,10 @@ from modules.propagation import fresnel_prop_no_scale, ang_spec_multi_prop_no_sc
 from modules.phase_screen_generation import ft_sub_harm_phase_screen, ft_phase_screen
 
 
-# slow because converting tensors to variables?
-# disables eager exec
-# @tf.function
-def tensorflow_test(n_scr):
-    D = 2
-    r0 = 0.1
-    N = 1024
-    L0 = 100
-    l0 = 0.01
-
-    delta = D/N
-    x = np.linspace(-N/2,N/2-1, N) * delta
-    y = np.linspace(-N/2,N/2-1, N) * delta
-
-    # n_scr = 10
-    # ft_phase_screen(r0, N, delta, L0, l0) # execute once for better benchmarking accuracy
-    # ft_sub_harm_phase_screen(r0, N, delta, L0, l0)
-
-    # out = tf.TensorArray(tf.float32, size=n_scr)
-    out = np.empty(n_scr, tf.Tensor)
-   
-    # start = Timer()
-    # i = tf.constant(0)
-    # cond = lambda i, out: tf.less(i, n_scr)
-    # def body(i, out: tf.TensorArray):
-    #     curr_phz = ft_sub_harm_phase_screen(r0, N, delta, L0, l0)
-    #     curr_i = i
-    #     return (tf.add(i,1), out.write(curr_i, curr_phz))
-    # i, out = tf.while_loop(cond, body, [i, out], parallel_iterations=4)
-    # # tf.print(out.stack())
-    # # print(Timer()-start)
-    # # phz = out.stack()
-    # # phz = out.read(0)
-    # # with tf.compat.v1.Session() as sess:
-    # #     phzs = sess.run(out.read(0))
-    # tf.print(Timer()-start)
-
-    start = Timer()
-    for i in range(n_scr):
-    #    out = out.write(i, ft_sub_harm_phase_screen(r0, N, delta, L0, l0))
-       out[i] = ft_sub_harm_phase_screen(r0, N, delta, L0, l0)
-    print(Timer()-start)
-    # phz = out[0]
-    # phz = out.stack() # careful if (n_scr * N^2) exeeds memory
-    # print(Timer()-start)
-    # tf.print(out.stack())
-
-    return out, x, y
-
-
 def phase_screen_gen():
+    '''
+    Basic phase screen generation using explicit calls to the FT and SubHarm method functions
+    '''
     D = 2
     r0 = 0.1
     N = 256
@@ -98,6 +51,9 @@ def phase_screen_gen():
 
 
 def phase_screen_statistics():
+    '''
+    Calculates the phase screen statistics for a FT and SubHarm method phase screen against theory.
+    '''
 
     def phase_screen_calcs(args):
         N, mask, L0, l0, r0, delta = args
@@ -160,6 +116,9 @@ def phase_screen_statistics():
 
 
 def PhaseScreenGenerator_generation_speed_TEST(n=100):
+    '''
+    Test to see how fast the PhaseScreenGenerator Class can create 'n' phase screens.
+    '''
     N = 1024
     r0 = 0.3
     L0 = 100
@@ -182,6 +141,10 @@ def PhaseScreenGenerator_generation_speed_TEST(n=100):
 
 
 def PhaseScreenGenerator_single_propagation_TEST():
+    '''
+    Phase screen generation by the PhaseScreenGenerator Class. Plane wave is propagated through 'nscr' phase screens.
+    Output wave intensity and phase are plotted to view results.
+    '''
     N = 1024
     r0 = 0.3
     L0 = 100
@@ -242,6 +205,10 @@ def PhaseScreenGenerator_single_propagation_TEST():
 
 
 def rectangular_phase_screen_test():
+    '''
+    Generating a rectangular phase screen. -- NOTE -- This is not robust and needs to be statistically verified. 
+    Current implementation is slow and not efficient. Find Phase Screen Generation papers in the ../documents folder
+    '''
     N = 4096
     M = 1024
     r0 = 0.1
@@ -255,6 +222,59 @@ def rectangular_phase_screen_test():
     plt.imshow(rect_phase_screen)
     plt.set_cmap('gray')
     plt.show()
+
+
+# slow because converting tensors to variables?
+# disables eager exec
+# @tf.function
+def tensorflow_test(n_scr):
+    '''
+    Preliminary tests done to experiment with Tensorflow optimization and parallelization techniques
+    '''
+    D = 2
+    r0 = 0.1
+    N = 1024
+    L0 = 100
+    l0 = 0.01
+
+    delta = D/N
+    x = np.linspace(-N/2,N/2-1, N) * delta
+    y = np.linspace(-N/2,N/2-1, N) * delta
+
+    # n_scr = 10
+    # ft_phase_screen(r0, N, delta, L0, l0) # execute once for better benchmarking accuracy
+    # ft_sub_harm_phase_screen(r0, N, delta, L0, l0)
+
+    # out = tf.TensorArray(tf.float32, size=n_scr)
+    out = np.empty(n_scr, tf.Tensor)
+   
+    # start = Timer()
+    # i = tf.constant(0)
+    # cond = lambda i, out: tf.less(i, n_scr)
+    # def body(i, out: tf.TensorArray):
+    #     curr_phz = ft_sub_harm_phase_screen(r0, N, delta, L0, l0)
+    #     curr_i = i
+    #     return (tf.add(i,1), out.write(curr_i, curr_phz))
+    # i, out = tf.while_loop(cond, body, [i, out], parallel_iterations=4)
+    # # tf.print(out.stack())
+    # # print(Timer()-start)
+    # # phz = out.stack()
+    # # phz = out.read(0)
+    # # with tf.compat.v1.Session() as sess:
+    # #     phzs = sess.run(out.read(0))
+    # tf.print(Timer()-start)
+
+    start = Timer()
+    for i in range(n_scr):
+    #    out = out.write(i, ft_sub_harm_phase_screen(r0, N, delta, L0, l0))
+       out[i] = ft_sub_harm_phase_screen(r0, N, delta, L0, l0)
+    print(Timer()-start)
+    # phz = out[0]
+    # phz = out.stack() # careful if (n_scr * N^2) exeeds memory
+    # print(Timer()-start)
+    # tf.print(out.stack())
+
+    return out, x, y
 
 
 def main():

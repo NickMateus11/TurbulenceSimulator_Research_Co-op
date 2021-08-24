@@ -98,3 +98,4 @@ Special focus should be given to the [MATLAB Textbook](documents\Reference-Mater
  - Graph execution of Tensorflow functions (performance increase). Information [here](https://www.tensorflow.org/guide/intro_to_graphs).
  - Further parallelization (execute multiple end-to-end propagations at once). This may be limited by the GPU VRAM. Optimizations may need to implemented in the storage of phase screens - ie: storing only the random seeds and regenerating the phase screens, or at least parts of them in order to reduce how much is being stored.
     - Perhaps look into running simulator components on GPU clusters on the cloud - where more memory may be available.
+ - Faster and more efficient rectangular phase screen generation. Read over the phase screen generation techniques in the [Papers](documents\Reference-Material\Papers) folder.
