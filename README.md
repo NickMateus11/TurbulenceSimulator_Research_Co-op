@@ -65,7 +65,7 @@ _Figure 1:_ Shows the execution of the `phase_screen_gen()` function found in [p
 
 <img src="./images/phaseScreenStats.png" width="50%">
 
-_Figure 2:_ Shows the execution of the `phase_screen_statistics()` function found in [phase_screen_test.py](src/phase_screen_test.py). It displays the statistical accuracy of the Fourier Transform Method, and the Subharmonic Method, with theory.
+_Figure 2:_ Shows the execution of the `phase_screen_statistics()` function found in [phase_screen_test.py](src/phase_screen_test.py#L53). It displays the statistical accuracy of the Fourier Transform Method, and the Subharmonic Method, with theory.
 
 <img src="./images/frozen_flow_rect.gif" width="50%">
 
