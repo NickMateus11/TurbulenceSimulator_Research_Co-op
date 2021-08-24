@@ -28,6 +28,22 @@ As scripts are mostly sandboxed/testing simulator modules, execution is as easy 
 ```
  > python ./src/gaussian_beam_test.py   
 ```
+__NOTE:__ each function in the script acts as a standalone test. To execute a different function/test you must comment/uncomment the function call within the `main()` function body. EX:
+
+```
+def main():
+
+    # pt_source_vac_prop()
+
+    # pt_source_turb_prop()
+
+    turb_prop_to_focus()
+
+    # turb_prop_to_focus_animation()
+
+if __name__ == '__main__':
+    main()
+```
 
 ## Architechure ##
 
@@ -94,8 +110,9 @@ Special focus should be given to the [MATLAB Textbook](documents/Reference-Mater
 
 
 ## TODOs ##
- - Channel Layer Slicer module (used to calculate optimal r0 values along the propagation path). More details can be found in Ch. 9.5 (& Listing 9.5) in the mentioned [MATLAB textbook](documents/Reference-Material/Textbooks/Numerical-Simulation-of-Optical-Wave-Propagation-with-Examples-in-MATLAB).
- - Graph execution of Tensorflow functions (performance increase). Information [here](https://www.tensorflow.org/guide/intro_to_graphs).
- - Further parallelization (execute multiple end-to-end propagations at once). This may be limited by the GPU VRAM. Optimizations may need to implemented in the storage of phase screens - ie: storing only the random seeds and regenerating the phase screens, or at least parts of them in order to reduce how much is being stored.
+ 1. Channel Layer Slicer module (used to calculate optimal r0 values along the propagation path). More details can be found in Ch. 9.5 (& Listing 9.5) in the mentioned [MATLAB textbook](documents/Reference-Material/Textbooks/Numerical-Simulation-of-Optical-Wave-Propagation-with-Examples-in-MATLAB).
+ 2. Faster and more efficient rectangular phase screen generation. Read over the phase screen generation techniques in the [Papers/](documents/Reference-Material/Papers) folder.
+ 3. Further parallelization (execute multiple end-to-end propagations at once). This may be limited by the GPU VRAM. Optimizations may need to implemented in the storage of phase screens - ie: storing only the random seeds and regenerating the phase screens, or at least parts of them in order to reduce how much is being stored.
     - Perhaps look into running simulator components on GPU clusters on the cloud - where more memory may be available.
- - Faster and more efficient rectangular phase screen generation. Read over the phase screen generation techniques in the [Papers](documents/Reference-Material/Papers) folder.
+ 4. Graph execution of Tensorflow functions (performance increase). Information [here](https://www.tensorflow.org/guide/intro_to_graphs).
+
